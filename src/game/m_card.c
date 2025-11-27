@@ -356,8 +356,8 @@ static void mCD_close_and_unmount(CARDFileInfo* fileInfo, s32 chan) {
     CARDUnmount(chan);
 }
 
-static int mCD_bg_check_slot(mCD_bg_info_c* bg_info, s32 chan, s32* result, void* data, const char* filename, s32 data_len,
-    u32 length, s32 offset, void** workArea_p, void** read_p, CARDStat* stat) {
+static int mCD_bg_check_slot(mCD_bg_info_c* bg_info, s32 chan, s32* result, void* data, const char* filename,
+                             s32 data_len, u32 length, s32 offset, void** workArea_p, void** read_p, CARDStat* stat) {
     int res = mCD_RESULT_BUSY;
     int common_res = mCD_check_card_common(result, mCD_MEMCARD_SECTORSIZE, chan);
 
@@ -519,8 +519,7 @@ typedef int (*mCD_BG_PROC)(mCD_bg_info_c*, s32, s32*, void*, const char*, s32, u
 
 /* @unused static int mCD_write_bg(void* data, const char* filename, s32 data_len, u32 length, s32 offset, s32 chan,
  * s32* result) */
-static int mCD_write_bg(void* data, const char* filename, s32 data_len, u32 length, s32 offset,
-                                         s32 chan, s32* result) {
+static int mCD_write_bg(void* data, const char* filename, s32 data_len, u32 length, s32 offset, s32 chan, s32* result) {
     static void* work_p = NULL;
     // clang-format off
     static mCD_BG_PROC wbg_proc[] = {
@@ -537,8 +536,8 @@ static int mCD_write_bg(void* data, const char* filename, s32 data_len, u32 leng
 }
 
 static int mCD_bg_init_write_comp(mCD_bg_info_c* bg_info, s32 chan, s32* result, void* data, const char* filename,
-                                   s32 data_len, u32 length, s32 offset, void** workArea_p, void** read_p,
-                                   CARDStat* stat) {
+                                  s32 data_len, u32 length, s32 offset, void** workArea_p, void** read_p,
+                                  CARDStat* stat) {
     int res = mCD_bg_init_com(bg_info, chan, result, workArea_p, read_p, TRUE);
 
     if (res == mCD_RESULT_SUCCESS) {
@@ -706,8 +705,8 @@ static int mCD_write_comp_bg(void* data, const char* filename, s32 data_len, u32
     int proc = bg_info->space_proc;
 
     if (proc >= 0 && proc < mCD_WBC_NUM) {
-        int success = (*wcbg_proc[proc])(bg_info, chan, result, data, filename, data_len, length, offset,
-                                                        &work_p, &read_p, NULL);
+        int success =
+            (*wcbg_proc[proc])(bg_info, chan, result, data, filename, data_len, length, offset, &work_p, &read_p, NULL);
 
         if (success == mCD_RESULT_SUCCESS && bg_info->space_proc == mCD_WBC_FINISHED) {
             mCD_ClearCardBgInfo(bg_info);
@@ -965,7 +964,8 @@ static int mCD_format_bg(s32 chan, s32* result) {
     mCD_bg_info_c* const bg_info = &l_mcd_bg_info;
 
     if (bg_info->space_proc >= 0 && bg_info->space_proc < 4) {
-        int success = (*fbg_proc[bg_info->space_proc])(&l_mcd_bg_info, chan, result, NULL, NULL, 0, 0, 0, &work_p, NULL, NULL);
+        int success =
+            (*fbg_proc[bg_info->space_proc])(&l_mcd_bg_info, chan, result, NULL, NULL, 0, 0, 0, &work_p, NULL, NULL);
 
         if (success == mCD_RESULT_SUCCESS && bg_info->space_proc == 4) {
             mCD_ClearCardBgInfo(bg_info);
@@ -1234,8 +1234,7 @@ static int mCD_create_file_bg(const char* filename, s32 perms, u32 length, s32 c
     proc = bg_info->space_proc;
     *fileNo = 0;
     if (proc >= 0 && proc < 5) {
-        int success = (*cbg_proc[proc])(bg_info, chan, result, NULL, filename, perms, length, 0, &work_p,
-                                                       NULL, NULL);
+        int success = (*cbg_proc[proc])(bg_info, chan, result, NULL, filename, perms, length, 0, &work_p, NULL, NULL);
 
         if (success == mCD_RESULT_SUCCESS && bg_info->space_proc == 5) {
             *fileNo = bg_info->fileNo;
@@ -1471,7 +1470,8 @@ static int mCD_erase_file_fg(const char* filename, s32 chan, s32* result, void* 
 static int mCD_rename_file_fg(const char* new_filename, const char* filename, s32 chan, s32* result, void* workArea) {
     int res = FALSE;
 
-    if (chan != -1 && workArea != NULL && mCD_check_card(result, mCD_MEMCARD_SECTORSIZE, (s32)chan) == mCD_RESULT_SUCCESS) {
+    if (chan != -1 && workArea != NULL &&
+        mCD_check_card(result, mCD_MEMCARD_SECTORSIZE, (s32)chan) == mCD_RESULT_SUCCESS) {
         *result = CARDMount((s32)chan, workArea, NULL);
         if (*result == CARD_RESULT_READY || *result == CARD_RESULT_BUSY) {
             *result = CARDCheck((s32)chan);
@@ -1528,7 +1528,7 @@ static char l_mCD_land_file_name_dummy[32] ATTRIBUTE_ALIGN(4) = "DobutsunomoriP_
 static char l_mCD_player_file_name[32] ATTRIBUTE_ALIGN(4) = "DobutsunomoriP_PL_";
 static char l_mCD_present_file_name[32] ATTRIBUTE_ALIGN(4) = "DobutsunomoriP_Omake_";
 
-#define l_mCD_land_file_name_len (sizeof("DobutsunomoriP_PL_")-1)
+#define l_mCD_land_file_name_len (sizeof("DobutsunomoriP_PL_") - 1)
 
 typedef struct {
     const char* filename; /* filename */
@@ -1657,7 +1657,7 @@ static void mCD_set_init_diary_data(void* buf) {
     mDi_entry_c* entry_p;
     int i;
     int j;
-    
+
     for (i = 0; i < mCD_KEEP_DIARY_COUNT; i++) {
         entry_p = keep_diary->entries[i];
         for (j = 0; j < mCD_KEEP_DIARY_ENTRY_COUNT; j++) {
@@ -1941,7 +1941,7 @@ static void mCD_MakeProtectCode(mCD_LandProtectCode_c* protect_code) {
 
 static int mCD_CompNoLandCode(u16* code0, u16* code1) {
     int res = FALSE;
-    
+
     if (mCD_CheckProtectCode(code0) == TRUE) {
         int i;
 
@@ -2216,7 +2216,7 @@ static int mCD_GetSpaceSlot_bg2(mCD_memMgr_c* mgr, int size) {
     int chan;
     int res;
     u8 _0010;
-    
+
     chan = 0;
     res = mCD_RESULT_BUSY;
     _0010 = mgr->_0010;
@@ -2302,7 +2302,7 @@ static int mCD_GetNoLandSlot_bg(mCD_memMgr_c* mgr) {
     mCD_memMgr_card_info_c* card_info;
     int res = mCD_RESULT_BUSY;
     u8 _0010 = mgr->_0010;
-    
+
     if ((_0010 & 1) == 1) {
         chan = 1;
     }
@@ -2384,13 +2384,13 @@ static void mCD_set_number_str(char* str, u8 num) {
     int f = FALSE;
     int fig_table[3];
     int i;
-    
+
     bzero(fig_table, sizeof(fig_table));
-    
+
     for (i = 0; i < 3; i++) {
         const int remain = n % 10;
         const int div = n / 10;
-        
+
         fig_table[i] = remain;
         n = div;
     }
@@ -2877,16 +2877,15 @@ static int mCD_SaveHome_bg_read_send_present(mCD_memMgr_c* mgr, mCD_memMgr_fileI
         /* Get info about the present save file */
         if (mCD_CheckPresentFile(mgr->filename, &fileInfo->fileNo, fileInfo->chan, &card_info->result,
                                  card_info->workArea) == TRUE) {
-            if (mCD_read_fg(workArea, mgr->filename, present_entry->entrysize,
-                            mCD_get_offset(mCD_FILE_PRESENT), fileInfo->chan,
-                            &card_info->result) == mCD_RESULT_SUCCESS) {
+            if (mCD_read_fg(workArea, mgr->filename, present_entry->entrysize, mCD_get_offset(mCD_FILE_PRESENT),
+                            fileInfo->chan, &card_info->result) == mCD_RESULT_SUCCESS) {
                 present_buf = (PresentSaveFile_c*)workArea;
-                
+
                 /* Determine if this is a bonus gift file or a 'gift' present file */
                 if (mCD_CheckFilename(present_buf->header.comment + 32, l_comment_gift_1_str, 13) == TRUE) {
                     type = mCD_PRESENT_TYPE_GIFT;
                 }
-                                
+
                 /* Try sending the presents */
                 if (mCD_send_present(present_buf, present_entry->entrysize) == TRUE) {
                     mgr->loaded_file_type = mCD_FILE_PRESENT;
@@ -2961,8 +2960,8 @@ static int mCD_SaveHome_bg_write_present(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_
         file_entry = &l_mcd_file_table[mgr->loaded_file_type];
         ofs = mCD_get_offset(mgr->loaded_file_type);
         card_info = &mgr->cards[chan];
-        write_res = mCD_write_comp_bg(mgr->workArea, mgr->filename, mgr->workArea_size, file_entry->filesize, ofs,
-                                          chan, &card_info->result);
+        write_res = mCD_write_comp_bg(mgr->workArea, mgr->filename, mgr->workArea_size, file_entry->filesize, ofs, chan,
+                                      &card_info->result);
 
         card_info->game_result = mCD_TransErrorCode(card_info->result);
         if (write_res != mCD_RESULT_BUSY) {
@@ -3072,8 +3071,8 @@ static int mCD_SaveHome_bg_create_file(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c*
     if (chan != -1) {
         card_info = &mgr->cards[chan];
         mgr->_019C = 1;
-        res = mCD_create_file_bg(l_mCD_land_file_name_dummy, CARD_ATTR_NO_MOVE | CARD_ATTR_NO_COPY,
-            entry->filesize, chan, &card_info->result, &card_info->fileNo);
+        res = mCD_create_file_bg(l_mCD_land_file_name_dummy, CARD_ATTR_NO_MOVE | CARD_ATTR_NO_COPY, entry->filesize,
+                                 chan, &card_info->result, &card_info->fileNo);
         card_info->game_result = mCD_TransErrorCode(card_info->result);
         if (res == mCD_RESULT_SUCCESS) {
             fileInfo->proc = mCD_SAVEHOME_BG_PROC_SET_FILE_PERMISSION;
@@ -3094,7 +3093,7 @@ static int mCD_check_broken_land(mCD_memMgr_c* mgr) {
 
     if (chan != -1 && save != NULL) {
         int i;
-        
+
         size = mCD_get_size(mCD_FILE_SAVE_MAIN);
         for (i = 0; i < 2; i++) {
             s32 result;
@@ -3183,31 +3182,31 @@ static int mCD_SaveHome_bg_repair_land(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c*
 
 // @unused mCD_SaveHome_bg_set_icon_data(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo)
 static int mCD_SaveHome_bg_set_icon_data(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
-        // clang-format off
+    // clang-format off
         static int icon_fileNo[] = {
             RESOURCE_EKI1, RESOURCE_EKI1_2, RESOURCE_EKI1_3, RESOURCE_EKI1_4, RESOURCE_EKI1_5,
             RESOURCE_EKI2, RESOURCE_EKI2_2, RESOURCE_EKI2_3, RESOURCE_EKI2_4, RESOURCE_EKI2_5,
             RESOURCE_EKI3, RESOURCE_EKI3_2, RESOURCE_EKI3_3, RESOURCE_EKI3_4, RESOURCE_EKI3_5,
         };
-    
+
         static int banner_fileNo[] = { RESOURCE_MURA_SPRING, RESOURCE_MURA_SUMMER, RESOURCE_MURA_FALL, RESOURCE_MURA_WINTER };
-        // clang-format on
+    // clang-format on
 
-        u8* buf = (u8*)mgr->workArea;
+    u8* buf = (u8*)mgr->workArea;
 
-        if (buf != NULL) {
-            mgr->loaded_file_type = mCD_FILE_SAVE_MISC;
-            mgr->workArea_size = mCD_get_size(mgr->loaded_file_type);
-            bzero(buf, mgr->workArea_size);
-            bcopy(l_comment_0_str, buf, sizeof(l_comment_0_str));
-            mCD_get_land_comment1((char*)buf + sizeof(l_comment_0_str), Save_Get(land_info).name);
-            buf = mCD_set_bti_data(buf, icon_fileNo[Save_Get(station_type)], 0xC00, 1, 0x200);
-            buf = mCD_set_bti_data(buf, banner_fileNo[Common_Get(time.season)], 0x400, 1, 0x200);
-            fileInfo->proc++;
-            return mCD_RESULT_SUCCESS;
-        }
+    if (buf != NULL) {
+        mgr->loaded_file_type = mCD_FILE_SAVE_MISC;
+        mgr->workArea_size = mCD_get_size(mgr->loaded_file_type);
+        bzero(buf, mgr->workArea_size);
+        bcopy(l_comment_0_str, buf, sizeof(l_comment_0_str));
+        mCD_get_land_comment1((char*)buf + sizeof(l_comment_0_str), Save_Get(land_info).name);
+        buf = mCD_set_bti_data(buf, icon_fileNo[Save_Get(station_type)], 0xC00, 1, 0x200);
+        buf = mCD_set_bti_data(buf, banner_fileNo[Common_Get(time.season)], 0x400, 1, 0x200);
+        fileInfo->proc++;
+        return mCD_RESULT_SUCCESS;
+    }
 
-        return mCD_RESULT_ERROR;
+    return mCD_RESULT_ERROR;
 }
 
 static int mCD_get_status_common(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo, const char* filename,
@@ -3251,7 +3250,6 @@ static int mCD_SaveHome_bg_set_file_permission(mCD_memMgr_c* mgr, mCD_memMgr_fil
     mCD_memMgr_card_info_c* card_info;
     int res = mCD_RESULT_BUSY;
 
-    
     if (chan != -1) {
         if (mgr->_019C == 1) {
             filename = l_mCD_land_file_name_dummy;
@@ -3383,8 +3381,8 @@ static int mCD_SaveHome_bg_write_main_2(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c
         mgr->loaded_file_type = mCD_FILE_SAVE_MAIN;
         ofs = mCD_get_offset(mgr->loaded_file_type);
         card_info = &mgr->cards[chan];
-        res = mCD_write_comp_bg(save, filename, mgr->workArea_size, file_entry->filesize, ofs, chan,
-                                &card_info->result);
+        res =
+            mCD_write_comp_bg(save, filename, mgr->workArea_size, file_entry->filesize, ofs, chan, &card_info->result);
         card_info->game_result = mCD_TransErrorCode(card_info->result);
 
         if (res == mCD_RESULT_SUCCESS) {
@@ -3419,8 +3417,8 @@ static int mCD_SaveHome_bg_write_bk(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fi
         mgr->loaded_file_type = mCD_FILE_SAVE_MAIN_BAK;
         ofs = mCD_get_offset(mgr->loaded_file_type);
         card_info = &mgr->cards[chan];
-        res = mCD_write_comp_bg(save, filename, mgr->workArea_size, file_entry->filesize, ofs, chan,
-                                &card_info->result);
+        res =
+            mCD_write_comp_bg(save, filename, mgr->workArea_size, file_entry->filesize, ofs, chan, &card_info->result);
         card_info->game_result = mCD_TransErrorCode(card_info->result);
 
         if (res == mCD_RESULT_SUCCESS) {
@@ -3454,7 +3452,6 @@ static int mCD_SaveHome_bg_set_others(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* 
 
     static int banner_fileNo[] = { RESOURCE_MURA_SPRING, RESOURCE_MURA_SUMMER, RESOURCE_MURA_FALL, RESOURCE_MURA_WINTER };
 
-    
     // clang-format on
 
     u8* data_p = (u8*)mgr->workArea;
@@ -3472,7 +3469,8 @@ static int mCD_SaveHome_bg_set_others(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* 
 
             mCD_save_data_aram_to_main(mail, l_aram_real_size_32_table[mCD_ARAM_DATA_MAIL], mCD_ARAM_DATA_MAIL);
             mail->landid = Save_Get(land_info).id;
-            mail->checksum = mFRm_GetFlatCheckSum((u16*)mail, l_aram_real_size_32_table[mCD_ARAM_DATA_MAIL], mail->checksum);
+            mail->checksum =
+                mFRm_GetFlatCheckSum((u16*)mail, l_aram_real_size_32_table[mCD_ARAM_DATA_MAIL], mail->checksum);
             data_p += l_aram_real_size_32_table[mCD_ARAM_DATA_MAIL];
             data_size = (sizeof(MemcardHeader_c) + 32) + l_aram_real_size_32_table[mCD_ARAM_DATA_MAIL];
         }
@@ -3480,7 +3478,8 @@ static int mCD_SaveHome_bg_set_others(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* 
         {
             mCD_keep_original_c* original = (mCD_keep_original_c*)data_p;
 
-            mCD_save_data_aram_to_main(original, l_aram_real_size_32_table[mCD_ARAM_DATA_ORIGINAL], mCD_ARAM_DATA_ORIGINAL);
+            mCD_save_data_aram_to_main(original, l_aram_real_size_32_table[mCD_ARAM_DATA_ORIGINAL],
+                                       mCD_ARAM_DATA_ORIGINAL);
             original->landid = Save_Get(land_info).id;
             original->checksum = mFRm_GetFlatCheckSum((u16*)original, l_aram_real_size_32_table[mCD_ARAM_DATA_ORIGINAL],
                                                       original->checksum);
@@ -3492,8 +3491,8 @@ static int mCD_SaveHome_bg_set_others(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* 
             mCD_keep_diary_c* diary = (mCD_keep_diary_c*)data_p;
 
             mCD_save_data_aram_to_main(diary, l_aram_real_size_32_table[mCD_ARAM_DATA_DIARY], mCD_ARAM_DATA_DIARY);
-            diary->checksum = mFRm_GetFlatCheckSum((u16*)diary, l_aram_real_size_32_table[mCD_ARAM_DATA_DIARY],
-                                                   diary->checksum);
+            diary->checksum =
+                mFRm_GetFlatCheckSum((u16*)diary, l_aram_real_size_32_table[mCD_ARAM_DATA_DIARY], diary->checksum);
             data_size += l_aram_real_size_32_table[mCD_ARAM_DATA_DIARY];
         }
 
@@ -3544,7 +3543,8 @@ static int mCD_SaveHome_bg_get_status_2(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c
         filename = l_mCD_land_file_name_dummy;
     }
 
-    return mCD_get_status_common(mgr, fileInfo, filename, 0, CARD_COMMENT_SIZE, CARD_STAT_ICON_C8, CARD_STAT_SPEED_SLOW, 1, CARD_STAT_BANNER_C8);
+    return mCD_get_status_common(mgr, fileInfo, filename, 0, CARD_COMMENT_SIZE, CARD_STAT_ICON_C8, CARD_STAT_SPEED_SLOW,
+                                 1, CARD_STAT_BANNER_C8);
 }
 
 static int mCD_SaveHome_bg_set_status_2(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
@@ -3579,9 +3579,10 @@ static int mCD_SaveHome_bg_rename(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* file
     if (mgr->_019C == 1) {
         if (chan != -1) {
             card_info = &mgr->cards[chan];
-            
+
             if (card_info->workArea != NULL) {
-                if (mCD_rename_file_fg(l_mCD_land_file_name, l_mCD_land_file_name_dummy, chan, &card_info->result, card_info->workArea) == TRUE) {
+                if (mCD_rename_file_fg(l_mCD_land_file_name, l_mCD_land_file_name_dummy, chan, &card_info->result,
+                                       card_info->workArea) == TRUE) {
                     fileInfo->proc++;
                     ret = mCD_RESULT_SUCCESS;
                 }
@@ -3649,7 +3650,7 @@ extern int mCD_SaveHome_bg(int param_1, int* chan) {
         mCD_SaveHome_bg_rename,
     };
     // clang-format on
-    
+
     mCD_memMgr_card_info_c* cardInfo;
     mCD_memMgr_c* mgr = &l_memMgr;
     mCD_memMgr_fileInfo_c* fileInfo = &mgr->save_home_info;
@@ -3660,7 +3661,7 @@ extern int mCD_SaveHome_bg(int param_1, int* chan) {
     if (mgr->_018C == 0) {
         if (proc < 18) {
             int res;
-            
+
             fileInfo->_04 = param_1;
             res = (*save_proc[proc])(mgr, fileInfo);
             if (res == mCD_RESULT_SUCCESS) {
@@ -3761,7 +3762,7 @@ static void mCD_load_set_others_common(mCD_memMgr_c* mgr, mCD_memMgr_card_info_c
     entry = &l_mcd_file_table[mCD_FILE_SAVE_MISC];
     if (mCD_read_fg(data_p, entry->filename, entry->entrysize, 0, chan, &card_info->result) == mCD_RESULT_SUCCESS) {
         data_p += sizeof(MemcardHeader_c) + 32;
-        
+
         {
             mCD_keep_mail_c* mail = (mCD_keep_mail_c*)data_p;
 
@@ -3776,7 +3777,8 @@ static void mCD_load_set_others_common(mCD_memMgr_c* mgr, mCD_memMgr_card_info_c
             mCD_keep_original_c* original = (mCD_keep_original_c*)data_p;
 
             if (mFRm_ReturnCheckSum((u16*)original, l_aram_real_size_32_table[mCD_ARAM_DATA_ORIGINAL]) == 0) {
-                mCD_save_data_main_to_aram(original, l_aram_real_size_32_table[mCD_ARAM_DATA_ORIGINAL], mCD_ARAM_DATA_ORIGINAL);
+                mCD_save_data_main_to_aram(original, l_aram_real_size_32_table[mCD_ARAM_DATA_ORIGINAL],
+                                           mCD_ARAM_DATA_ORIGINAL);
             }
 
             data_p += l_aram_real_size_32_table[mCD_ARAM_DATA_ORIGINAL];
@@ -3824,7 +3826,8 @@ extern void mCD_LoadLand(void) {
 
                 if (mCD_load_file(save, mgr->loaded_file_type, chan, &card_info->result) == mCD_RESULT_SUCCESS) {
                     if (mFRm_CheckSaveData_common(&save->save_check, save->land_info.id)) {
-                        if (mFRm_ReturnCheckSum((u16*)save, mgr->workArea_size) == 0 && (save->save_check.version == 6 || save->save_check.version == 5)) {
+                        if (mFRm_ReturnCheckSum((u16*)save, mgr->workArea_size) == 0 &&
+                            (save->save_check.version == 6 || save->save_check.version == 5)) {
                             bcopy(save, Common_GetPointer(save), sizeof(Save));
                             save_found = TRUE;
                             Common_Set(copy_protect, Save_Get(copy_protect));
@@ -3846,13 +3849,15 @@ extern void mCD_LoadLand(void) {
                     }
                 } else {
                     if (card_info->result == CARD_RESULT_NOFILE) {
-                        if (mCD_find_fg(l_mCD_land_file_name_dummy, card_info->workArea, chan, &card_info->result) == TRUE) {
+                        if (mCD_find_fg(l_mCD_land_file_name_dummy, card_info->workArea, chan, &card_info->result) ==
+                            TRUE) {
                             cond[chan] = 0;
                         } else {
                             int res = mCD_RESULT_BUSY;
 
                             while (res == mCD_RESULT_BUSY) {
-                                res = mCD_get_space_bg(&card_info->freeBytes, chan, &card_info->result, card_info->workArea);
+                                res = mCD_get_space_bg(&card_info->freeBytes, chan, &card_info->result,
+                                                       card_info->workArea);
                             }
 
                             if (res == mCD_RESULT_SUCCESS) {
@@ -3885,7 +3890,8 @@ extern void mCD_LoadLand(void) {
             }
 
             if (bad_save_chan == 1 && save_chan == -1) {
-                noLand_info[chan] = mCD_check_noLand_file((mCD_LandProtectCode_c*)noLand_code[chan], (u8*)mgr->workArea, chan);
+                noLand_info[chan] =
+                    mCD_check_noLand_file((mCD_LandProtectCode_c*)noLand_code[chan], (u8*)mgr->workArea, chan);
                 save_chan = chan;
             }
 
@@ -3925,8 +3931,9 @@ extern void mCD_LoadLand(void) {
     }
 
     mCD_ClearMemMgr_com2(mgr);
-    
-    if (mFRm_CheckSaveData_common(Save_GetPointer(save_check), Save_Get(land_info).id) && Save_Get(save_check).version == 5) {
+
+    if (mFRm_CheckSaveData_common(Save_GetPointer(save_check), Save_Get(land_info).id) &&
+        Save_Get(save_check).version == 5) {
         bcopy(&Save_Get(save_check).time, Save_GetPointer(saved_auto_nwrite_time), sizeof(lbRTC_time_c));
     }
 }
@@ -3953,7 +3960,7 @@ extern void mCD_ReCheckLoadLand(GAME_PLAY* play) {
         Common_Set(last_field_id, RSV_NO);
     } else {
         int res = mFRm_CheckSaveData();
-        
+
         if (res == FALSE) {
             scene = SCENE_PLAYERSELECT;
             Common_Set(house_owner_name, RSV_NO);
@@ -3967,7 +3974,6 @@ extern void mCD_ReCheckLoadLand(GAME_PLAY* play) {
             mEv_ClearEventInfo();
         }
     }
-
 
     play->next_scene_no = scene;
 }
@@ -3997,20 +4003,20 @@ static int mCD_EraseLand_bg_get_area(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* f
 static int mCD_EraseLand_bg_get_slot(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
     mCD_memMgr_card_info_c* card_info = mgr->cards;
     int res = mCD_RESULT_BUSY;
-    
+
     if (mgr->cards[0].workArea != NULL && mgr->cards[1].workArea != NULL && mgr->workArea != NULL) {
         if (Save_Get(save_exist) == FALSE) {
             res = mCD_RESULT_ERROR;
         } else {
             int slot = mCD_get_this_land_slot_no(mgr);
-            
+
             if (slot == mCD_SLOT_B) {
                 if (mgr->chan != -1) {
                     res = mCD_RESULT_SUCCESS;
                     fileInfo->proc++;
                 } else {
                     res = mCD_RESULT_ERROR;
-                } 
+                }
             } else if (slot != mCD_SLOT_A) {
                 res = mCD_RESULT_ERROR;
             }
@@ -4055,7 +4061,8 @@ static int mCD_EraseLand_bg_write_main(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c*
         entry = &l_mcd_file_table[mgr->loaded_file_type];
         ofs = mCD_get_offset(mgr->loaded_file_type);
         card_info = &mgr->cards[chan];
-        res = mCD_write_comp_bg(mgr->workArea, entry->filename, mgr->workArea_size, entry->filesize, ofs, chan, &card_info->result);
+        res = mCD_write_comp_bg(mgr->workArea, entry->filename, mgr->workArea_size, entry->filesize, ofs, chan,
+                                &card_info->result);
         card_info->game_result = mCD_TransErrorCode(card_info->result);
 
         if (res == mCD_RESULT_SUCCESS) {
@@ -4069,7 +4076,6 @@ static int mCD_EraseLand_bg_write_main(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c*
     return res;
 }
 
-
 static int mCD_EraseLand_bg_write_bk(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
     mCD_file_entry_c* entry;
     mCD_memMgr_card_info_c* card_info;
@@ -4081,7 +4087,8 @@ static int mCD_EraseLand_bg_write_bk(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* f
         entry = &l_mcd_file_table[mgr->loaded_file_type];
         ofs = mCD_get_offset(mgr->loaded_file_type);
         card_info = &mgr->cards[chan];
-        res = mCD_write_comp_bg(mgr->workArea, entry->filename, mgr->workArea_size, entry->filesize, ofs, chan, &card_info->result);
+        res = mCD_write_comp_bg(mgr->workArea, entry->filename, mgr->workArea_size, entry->filesize, ofs, chan,
+                                &card_info->result);
         card_info->game_result = mCD_TransErrorCode(card_info->result);
 
         if (res == mCD_RESULT_SUCCESS) {
@@ -4120,7 +4127,7 @@ static int mCD_EraseLand_bg_load_icon(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* 
 
 static int mCD_EraseLand_bg_write_icon(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
     int res;
-    
+
     res = mCD_write_common(mgr);
 
     if (res == mCD_RESULT_SUCCESS) {
@@ -4180,7 +4187,7 @@ extern int mCD_EraseLand_bg(int* slot) {
                     mgr->_0190 = ret;
                     mgr->_0194 = *slot;
                     ret = mCD_TRANS_ERR_BUSY;
-                    
+
                     if (mgr->_0190 == mCD_TRANS_ERR_BUSY) {
                         mgr->_0190 = mCD_TRANS_ERR_NOCARD;
                     }
@@ -4208,7 +4215,7 @@ static int mCD_EraseBrokenLand_bg_get_slot(mCD_memMgr_c* mgr, mCD_memMgr_fileInf
     s32 chan;
     int type;
     int ret;
-    
+
     save = (Save_t*)mgr->workArea;
     card_info = mgr->cards;
     sel_chan = -1;
@@ -4225,7 +4232,8 @@ static int mCD_EraseBrokenLand_bg_get_slot(mCD_memMgr_c* mgr, mCD_memMgr_fileInf
 
                 if (mCD_load_file(save, mgr->loaded_file_type, chan, &card_info->result) == mCD_RESULT_SUCCESS) {
                     if (mFRm_CheckSaveData_common(&save->save_check, save->land_info.id)) {
-                        if (mFRm_ReturnCheckSum((u16*)save, mgr->workArea_size) == 0 && (save->save_check.version == 6 || save->save_check.version == 5)) {
+                        if (mFRm_ReturnCheckSum((u16*)save, mgr->workArea_size) == 0 &&
+                            (save->save_check.version == 6 || save->save_check.version == 5)) {
                             card_info->game_result = mCD_TRANS_ERR_15;
                             sel_chan = chan;
                             break;
@@ -4240,7 +4248,7 @@ static int mCD_EraseBrokenLand_bg_get_slot(mCD_memMgr_c* mgr, mCD_memMgr_fileInf
                     break;
                 }
             }
-                        
+
             if (i == 2) {
                 mgr->chan = chan;
                 break;
@@ -4317,7 +4325,7 @@ extern int mCD_EraseBrokenLand_bg(int* slot) {
                     mgr->_0190 = ret;
                     mgr->_0194 = *slot;
                     ret = mCD_TRANS_ERR_BUSY;
-                    
+
                     if (mgr->_0190 == mCD_TRANS_ERR_BUSY) {
                         mgr->_0190 = mCD_TRANS_ERR_NOCARD;
                     }
@@ -4340,25 +4348,25 @@ extern int mCD_EraseBrokenLand_bg(int* slot) {
 extern int mCD_CheckPassportFile(void) {
     void* workArea;
     int ret;
-    
+
     ret = -1;
     workArea = mCD_malloc_32(CARD_WORKAREA_SIZE);
-    
+
     if (workArea != NULL) {
         int i;
-        
+
         for (i = 0; i < 2; i++) {
             if (mCD_CheckPassportFile_slot(i, workArea) == TRUE) {
                 ret = i;
                 break;
             }
         }
-        
+
         if (workArea != NULL) {
             zelda_free(workArea);
         }
     }
-    
+
     return ret;
 }
 
@@ -4370,11 +4378,12 @@ extern int mCD_CheckBrokenPassportFile(int slot) {
     s32 result;
     CARDStat stat;
     CARDFileInfo file_info;
-    
+
     ret = FALSE;
     workArea = mCD_malloc_32(CARD_WORKAREA_SIZE);
     foreigner_file = (ForeignerFile_c*)mCD_malloc_32(mCD_PLAYER_SAVE_SIZE);
-    if ((slot == mCD_SLOT_A || slot == mCD_SLOT_B) && workArea != NULL && foreigner_file != NULL && mCD_check_card(&result, mCD_MEMCARD_SECTORSIZE, slot) == TRUE) {
+    if ((slot == mCD_SLOT_A || slot == mCD_SLOT_B) && workArea != NULL && foreigner_file != NULL &&
+        mCD_check_card(&result, mCD_MEMCARD_SECTORSIZE, slot) == TRUE) {
         result = CARDMount((s32)slot, workArea, NULL);
         if (result == CARD_RESULT_READY || result == CARD_RESULT_BROKEN) {
             result = CARDCheck((s32)slot);
@@ -4388,8 +4397,10 @@ extern int mCD_CheckBrokenPassportFile(int slot) {
 
                         if (result == CARD_RESULT_READY) {
                             result = CARDRead(&file_info, foreigner_file, mCD_PLAYER_SAVE_SIZE, 0);
-                            
-                            if (result == CARD_RESULT_READY && (mFRm_ReturnCheckSum((u16*)&foreigner_file->file, sizeof(mCD_foreigner_c)) != 0 || mPr_NullCheckPersonalID(&foreigner_file->file.priv.player_ID) == TRUE)) {
+
+                            if (result == CARD_RESULT_READY &&
+                                (mFRm_ReturnCheckSum((u16*)&foreigner_file->file, sizeof(mCD_foreigner_c)) != 0 ||
+                                 mPr_NullCheckPersonalID(&foreigner_file->file.priv.player_ID) == TRUE)) {
                                 CARDClose(&file_info);
                                 ret = TRUE;
                                 break;
@@ -4466,12 +4477,12 @@ static int mCD_ErasePassportFile_bg_get_broken_Passport(mCD_memMgr_c* mgr, mCD_m
     int chan;
     int fileNo;
     CARDStat* stat;
-    
+
     foreigner_file = (ForeignerFile_c*)mgr->workArea;
     chan = mgr->chan;
     fileNo = fileInfo->_04;
     ret = mCD_RESULT_BUSY;
-    
+
     if (chan != -1 && foreigner_file != NULL) {
         card_info = &mgr->cards[chan];
         stat = &card_info->stat;
@@ -4483,8 +4494,10 @@ static int mCD_ErasePassportFile_bg_get_broken_Passport(mCD_memMgr_c* mgr, mCD_m
 
                 if (card_info->result == CARD_RESULT_READY) {
                     card_info->result = CARDRead(&file_info, foreigner_file, mCD_PLAYER_SAVE_SIZE, 0);
-                    
-                    if (card_info->result == CARD_RESULT_READY && (mFRm_ReturnCheckSum((u16*)&foreigner_file->file, sizeof(mCD_foreigner_c)) != 0 || mPr_NullCheckPersonalID(&foreigner_file->file.priv.player_ID) == TRUE)) {
+
+                    if (card_info->result == CARD_RESULT_READY &&
+                        (mFRm_ReturnCheckSum((u16*)&foreigner_file->file, sizeof(mCD_foreigner_c)) != 0 ||
+                         mPr_NullCheckPersonalID(&foreigner_file->file.priv.player_ID) == TRUE)) {
                         fileInfo->_04 = i;
                         CARDClose(&file_info);
                         card_info->result = CARDDeleteAsync((s32)chan, stat->fileName, NULL);
@@ -4644,7 +4657,7 @@ static Private_c* mCD_GetSaveFilePrivateP(void) {
 
 static int mCD_InitGameStart_bg_get_area(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
     static int sound_mode[] = { 2, 0, 0, 0, 0 };
-    
+
     int soundm = 2;
 
     if (fileInfo->chan >= 0 && fileInfo->chan < 5) {
@@ -4659,14 +4672,14 @@ static int mCD_InitGameStart_bg_get_area(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_
 static int mCD_InitGameStart_bg_get_slot(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
     int _0C = fileInfo->chan;
     int res = mCD_RESULT_BUSY;
-    
+
     if (mgr->cards[0].workArea != NULL && mgr->cards[1].workArea != NULL && mgr->workArea != NULL) {
         if (_0C == 0 || _0C == 2) {
             res = mCD_RESULT_SUCCESS;
             fileInfo->proc = 4;
         } else {
             int slot = mCD_get_this_land_slot_no_game_start(mgr);
-            
+
             if (slot == mCD_SLOT_B) {
                 int chan = mgr->chan;
 
@@ -4682,7 +4695,7 @@ static int mCD_InitGameStart_bg_get_slot(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_
                     }
                 } else {
                     res = mCD_RESULT_ERROR;
-                } 
+                }
             } else if (slot != mCD_SLOT_A) {
                 res = mCD_RESULT_ERROR;
             }
@@ -4717,21 +4730,21 @@ static int mCD_LoadPrivate_idx(mCD_memMgr_c* mgr, Private_c* priv, Animal_c* ani
 
     if (workArea != NULL && idx >= 0 && idx < ARRAY_SIZE(l_mcd_card_private_table, mCD_cardPrivate_c)) {
         card_priv = &l_mcd_card_private_table[idx];
-        
+
         if (!mPr_NullCheckPersonalID(&card_priv->pid)) {
             s32 result;
             int i;
-            
+
             for (i = 0; i < mCD_SLOT_NUM; i++) {
                 file = (ForeignerFile_c*)workArea;
                 foreigner = &file->file;
 
                 bzero(workArea, sizeof(ForeignerFile_c));
 
-                if (mCD_read_fg(file, card_priv->filename, sizeof(ForeignerFile_c), 0, i, &result) == mCD_RESULT_SUCCESS) {
+                if (mCD_read_fg(file, card_priv->filename, sizeof(ForeignerFile_c), 0, i, &result) ==
+                    mCD_RESULT_SUCCESS) {
                     if (mFRm_ReturnCheckSum((u16*)foreigner, sizeof(mCD_foreigner_c)) == 0 &&
-                        mPr_CheckCmpPersonalID(&foreigner->priv.player_ID, &card_priv->pid) == TRUE
-                    ) {
+                        mPr_CheckCmpPersonalID(&foreigner->priv.player_ID, &card_priv->pid) == TRUE) {
                         mPr_CopyPrivateInfo(priv, &foreigner->priv);
                         if (animal != NULL) {
                             bcopy(&foreigner->remove_animal, animal, sizeof(Animal_c));
@@ -4745,7 +4758,7 @@ static int mCD_LoadPrivate_idx(mCD_memMgr_c* mgr, Private_c* priv, Animal_c* ani
             }
         }
     }
-    
+
     return ret;
 }
 
@@ -4761,7 +4774,6 @@ static int mCD_InitGameStart_bg_make_data(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo
     int res = TRUE;
     int ret;
 
-
     if (start_cond >= 5) {
         start_cond = 0;
         fileInfo->chan = 0;
@@ -4775,7 +4787,7 @@ static int mCD_InitGameStart_bg_make_data(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo
                 mPr_LoadPak_and_SetPrivateInfo2(priv, player_no);
                 card_priv = &l_mcd_card_private_table[private_idx];
                 mCD_SetCardPrivateTable(&l_mcd_card_private, &card_priv->pid, card_priv->filename);
-            } 
+            }
             break;
         case 4:
             priv = mPr_GetForeignerP();
@@ -4812,7 +4824,7 @@ static int mCD_InitGameStart_bg_make_data(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo
                     if (Common_Get(player_decoy_flag) == TRUE) {
                         priv->exists = FALSE;
                     }
-                    
+
                     fileInfo->proc++;
                     ret = mCD_RESULT_SUCCESS;
                 }
@@ -4987,10 +4999,11 @@ static int mCD_InitGameStart_erase_passport(mCD_memMgr_c* mgr, mCD_memMgr_fileIn
 
             if (mCD_load_file(mgr->workArea, mgr->loaded_file_type, chan, &card->result) == mCD_RESULT_SUCCESS) {
                 int checksum = mFRm_ReturnCheckSum((u16*)mgr->workArea, mgr->workArea_size);
-                
+
                 save = (Save_t*)mgr->workArea;
-                
-                if (checksum == 0 && mLd_CheckId(save->land_info.id) == TRUE && mLd_CheckThisLand(save->land_info.name, save->land_info.id) == TRUE) {
+
+                if (checksum == 0 && mLd_CheckId(save->land_info.id) == TRUE &&
+                    mLd_CheckThisLand(save->land_info.name, save->land_info.id) == TRUE) {
                     mgr->loaded_file_type = mCD_FILE_SAVE_MAIN;
                     fileInfo->proc = 9;
                     ret = mCD_RESULT_SUCCESS;
@@ -5021,8 +5034,9 @@ static int mCD_InitGameStart_write_passport(mCD_memMgr_c* mgr, mCD_memMgr_fileIn
 
     card = &mgr->cards[chan];
     entry = &l_mcd_file_table[mgr->loaded_file_type];
-    ret = mCD_write_comp_bg(mgr->workArea, l_mcd_card_private.filename, mgr->workArea_size, entry->filesize, mCD_get_offset(mgr->loaded_file_type), chan, &card->result);
-    
+    ret = mCD_write_comp_bg(mgr->workArea, l_mcd_card_private.filename, mgr->workArea_size, entry->filesize,
+                            mCD_get_offset(mgr->loaded_file_type), chan, &card->result);
+
     if (ret == mCD_RESULT_SUCCESS) {
         fileInfo->proc++;
         mgr->loaded_file_type = mCD_FILE_SAVE_MAIN_BAK;
@@ -5044,10 +5058,11 @@ static int mCD_InitGameStart_write_passport(mCD_memMgr_c* mgr, mCD_memMgr_fileIn
 
         if (mCD_load_file(mgr->workArea, mgr->loaded_file_type, chan, &card->result) == mCD_RESULT_SUCCESS) {
             int checksum = mFRm_ReturnCheckSum((u16*)mgr->workArea, mgr->workArea_size);
-            
+
             save = (Save_t*)mgr->workArea;
-            
-            if (checksum == 0 && mLd_CheckId(save->land_info.id) == TRUE && mLd_CheckThisLand(save->land_info.name, save->land_info.id) == TRUE) {
+
+            if (checksum == 0 && mLd_CheckId(save->land_info.id) == TRUE &&
+                mLd_CheckThisLand(save->land_info.name, save->land_info.id) == TRUE) {
                 mgr->loaded_file_type = mCD_FILE_SAVE_MAIN;
                 fileInfo->proc++;
                 ret = mCD_RESULT_SUCCESS;
@@ -5123,7 +5138,7 @@ extern int mCD_InitGameStart_bg(int player_no, int card_private_idx, int start_c
             fileInfo->fileNo = card_private_idx;
             fileInfo->chan = start_cond;
             res = (*start_proc[proc])(mgr, fileInfo);
-            
+
             if (res == mCD_RESULT_SUCCESS) {
                 if (fileInfo->proc == 10) {
                     *mounted_chan = mgr->chan;
@@ -5239,7 +5254,7 @@ extern int mCD_SaveErasePlayer_bg(int* mounted_chan) {
     if (mgr->_018C == 0) {
         if (proc < 5) {
             res = (*start_proc[proc])(mgr, fileInfo);
-            
+
             if (res == mCD_RESULT_SUCCESS) {
                 if (fileInfo->proc == 5) {
                     *mounted_chan = mgr->chan;
@@ -5306,9 +5321,10 @@ extern int mCD_GetPlayerNum(void) {
         card = &mgr->cards[chan];
         stat = &card->stat;
         card->workArea = mCD_malloc_32(CARD_WORKAREA_SIZE);
-        if (card->workArea != NULL && mCD_check_card(&card->result, mCD_MEMCARD_SECTORSIZE, chan) == mCD_RESULT_SUCCESS) {
+        if (card->workArea != NULL &&
+            mCD_check_card(&card->result, mCD_MEMCARD_SECTORSIZE, chan) == mCD_RESULT_SUCCESS) {
             card->result = CARDMount(chan, card->workArea, NULL);
-            
+
             if (card->result == CARD_RESULT_READY || card->result == CARD_RESULT_BROKEN) {
                 card->result = CARDCheck(chan);
 
@@ -5320,18 +5336,19 @@ extern int mCD_GetPlayerNum(void) {
                             card->result = CARDOpen(chan, stat->fileName, &cFileInfo);
                             if (card->result == CARD_RESULT_READY) {
                                 card->result = CARDRead(&cFileInfo, mgr->workArea, sizeof(ForeignerFile_c), 0);
-                                
+
                                 if (card->result == CARD_RESULT_READY) {
                                     u16 checksum;
-                                    
+
                                     foreigner = (ForeignerFile_c*)mgr->workArea;
                                     checksum = mFRm_ReturnCheckSum((u16*)&foreigner->file, sizeof(foreigner->file));
                                     priv = &foreigner->file.priv;
                                     if (checksum == 0 && !mPr_NullCheckPersonalID(&priv->player_ID)) {
-                                        mCD_SetCardPrivateTable(card_priv, &foreigner->file.priv.player_ID, stat->fileName);
+                                        mCD_SetCardPrivateTable(card_priv, &foreigner->file.priv.player_ID,
+                                                                stat->fileName);
                                         count++;
                                         card_priv++;
-                                        
+
                                         if (count >= (u32)ARRAY_COUNT(l_mcd_card_private_table)) {
                                             CARDClose(&cFileInfo);
                                             break;
@@ -5362,7 +5379,8 @@ extern int mCD_GetCardPrivateNameCopy(u8* dst, int idx) {
     int ret = FALSE;
 
     if (dst != NULL && idx >= 0 && idx < ARRAY_SIZE(l_mcd_card_private_table, mCD_cardPrivate_c)) {
-        bcopy(l_mcd_card_private_table[idx].pid.player_name, dst, sizeof(l_mcd_card_private_table[idx].pid.player_name));
+        bcopy(l_mcd_card_private_table[idx].pid.player_name, dst,
+              sizeof(l_mcd_card_private_table[idx].pid.player_name));
         ret = TRUE;
     }
 
@@ -5421,10 +5439,12 @@ extern int mCD_GetSaveHomeSlotNo(void) {
         mCD_ClearMemMgr_com2(mgr);
 
         if (mCD_bg_get_area_common(mgr, fileInfo, mCD_FILE_SAVE_MAIN, 2) == mCD_RESULT_SUCCESS) {
-            if (mgr->cards[mCD_SLOT_A].workArea != NULL && mgr->cards[mCD_SLOT_B].workArea != NULL && mgr->workArea != NULL) {
+            if (mgr->cards[mCD_SLOT_A].workArea != NULL && mgr->cards[mCD_SLOT_B].workArea != NULL &&
+                mgr->workArea != NULL) {
                 state = mCD_RESULT_BUSY;
 
-                if (mCD_CheckInitProtectCode(&l_keep_noLandCode) == FALSE && mCD_CheckProtectCode(l_keep_noLandCode.code) == TRUE) {
+                if (mCD_CheckInitProtectCode(&l_keep_noLandCode) == FALSE &&
+                    mCD_CheckProtectCode(l_keep_noLandCode.code) == TRUE) {
                     while (state == mCD_RESULT_BUSY) {
                         state = mCD_GetNoLandSlot_bg(mgr);
                     }
@@ -5452,7 +5472,8 @@ extern int mCD_GetSaveHomeSlotNo(void) {
     return ret;
 }
 
-static int mCD_GetLandSlotNo_code_com(mLd_land_info_c* land_info, u16 land_id, PersonalID_c* pid, int* player_no, s32* slot_results) {
+static int mCD_GetLandSlotNo_code_com(mLd_land_info_c* land_info, u16 land_id, PersonalID_c* pid, int* player_no,
+                                      s32* slot_results) {
     int ret = mCD_RESULT_ERROR;
     mCD_memMgr_c* mgr = &l_memMgr;
     mCD_memMgr_fileInfo_c* fileInfo = &l_memMgr.save_home_info;
@@ -5490,14 +5511,16 @@ static int mCD_GetLandSlotNo_code_com(mLd_land_info_c* land_info, u16 land_id, P
                     mgr->workArea_size = mCD_get_size(mgr->loaded_file_type);
                     bzero(save, mgr->workArea_size);
                     res = mCD_load_file(save, mgr->loaded_file_type, i, &result);
-                    
+
                     if (slot_results != NULL) {
                         slot_results[i] = result;
                     }
 
                     if (res == mCD_RESULT_SUCCESS) {
                         save_land_info = &save->land_info;
-                        if (mFRm_CheckSaveData_common(&save->save_check, save_land_info->id) && mLd_CheckCmpLand(save_land_info->name, save_land_info->id, land_info->name, land_id) == TRUE) {
+                        if (mFRm_CheckSaveData_common(&save->save_check, save_land_info->id) &&
+                            mLd_CheckCmpLand(save_land_info->name, save_land_info->id, land_info->name, land_id) ==
+                                TRUE) {
                             if (player_no != NULL) {
                                 priv = save->private_data;
                                 for (k = 0; k < PLAYER_NUM; k++) {
@@ -5606,7 +5629,7 @@ static int mCD_CheckStation_check_next_land(mCD_memMgr_c* mgr, mCD_memMgr_fileIn
     chan = mgr->chan;
     if (mgr->workArea != NULL && chan != -1) {
         bzero(mgr->workArea, mgr->workArea_size);
-        
+
         card = &mgr->cards[chan];
         card->_8C = 0;
         for (i = 0; i < 2; i++) {
@@ -5752,9 +5775,11 @@ static int mCD_CheckStation_check_passport(mCD_memMgr_c* mgr, mCD_memMgr_fileInf
         card = &mgr->cards[chan];
         // issue - changing mCD_check_card's `chan` parameter to be s32 fixes this func but breaks several others
 #ifdef MUST_MATCH
-        if (card->workArea != NULL && mCD_check_card_inline_hack(&card->result, mCD_MEMCARD_SECTORSIZE, chan) == mCD_RESULT_SUCCESS) {
+        if (card->workArea != NULL &&
+            mCD_check_card_inline_hack(&card->result, mCD_MEMCARD_SECTORSIZE, chan) == mCD_RESULT_SUCCESS) {
 #else
-        if (card->workArea != NULL && mCD_check_card(&card->result, mCD_MEMCARD_SECTORSIZE, chan) == mCD_RESULT_SUCCESS) {
+        if (card->workArea != NULL &&
+            mCD_check_card(&card->result, mCD_MEMCARD_SECTORSIZE, chan) == mCD_RESULT_SUCCESS) {
 #endif
             card->result = CARDMount(chan, card->workArea, NULL);
             if (card->result == CARD_RESULT_READY || card->result == CARD_RESULT_BROKEN) {
@@ -5773,7 +5798,8 @@ static int mCD_CheckStation_check_passport(mCD_memMgr_c* mgr, mCD_memMgr_fileInf
                                     passport_priv = &passport->file.priv;
 
                                     if (res == 0) {
-                                        if (mPr_CheckCmpPersonalID(&priv->player_ID, &passport_priv->player_ID) == TRUE) {
+                                        if (mPr_CheckCmpPersonalID(&priv->player_ID, &passport_priv->player_ID) ==
+                                            TRUE) {
                                             bcopy(card->stat.fileName, mgr->filename, sizeof(mgr->filename));
                                             fileInfo->_04 = mCD_TRANS_ERR_TRAVEL_DATA_EXISTS;
                                             fileInfo->proc = 5;
@@ -5848,7 +5874,7 @@ static int mCD_CheckStation_check_passport(mCD_memMgr_c* mgr, mCD_memMgr_fileInf
 
 typedef int (*mCD_CHECKSTATION_PROC)(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo);
 
-extern int mCD_CheckStation_bg(s32 *chan) {
+extern int mCD_CheckStation_bg(s32* chan) {
     mCD_memMgr_c* mgr = &l_memMgr;
     mCD_memMgr_fileInfo_c* fileInfo = &mgr->init_game_start_info;
     int res;
@@ -5973,7 +5999,7 @@ static int mCD_SaveStation_NextLand_get_next_land_data(mCD_memMgr_c* mgr, mCD_me
     chan = mgr->chan;
     if (mgr->workArea != NULL && chan != -1) {
         bzero(mgr->workArea, mgr->workArea_size);
-        
+
         card = &mgr->cards[chan];
         card->_8C = 0;
         for (i = 0; i < 2; i++) {
@@ -6104,29 +6130,28 @@ static int mCD_SaveStation_NextLand_load_others(mCD_memMgr_c* mgr, mCD_memMgr_fi
     return ret;
 }
 
-static void mCD_CopyKeep(
-    mActor_name_t* pockets_p, //
-    u8* lotto_ticket_expiry_p, //
-    u8* lotto_ticket_mail_storage_p, //
-    u32* item_cond_p, //
-    u32* wallet_p, //
-    mQst_delivery_c* delivery_p, //
-    mQst_errand_c* errand_p, //
-    Mail_c* mail_p, //
-    mPr_catalog_order_c* catalog_orders_p, //
-    Anmremail_c* remail_p, //
-    mPr_animal_memory_c* animal_memory_p, //
-    mActor_name_t* pockets, //
-    u8 lotto_ticket_expiry, //
-    u8 lotto_ticket_mail_storage, //
-    u32 item_cond, //
-    u32 wallet, //
-    mQst_delivery_c* delivery, //
-    mQst_errand_c* errand, //
-    Mail_c* mail, //
-    mPr_catalog_order_c* catalog_orders, //
-    Anmremail_c* remail, //
-    mPr_animal_memory_c* animal_memory //
+static void mCD_CopyKeep(mActor_name_t* pockets_p,              //
+                         u8* lotto_ticket_expiry_p,             //
+                         u8* lotto_ticket_mail_storage_p,       //
+                         u32* item_cond_p,                      //
+                         u32* wallet_p,                         //
+                         mQst_delivery_c* delivery_p,           //
+                         mQst_errand_c* errand_p,               //
+                         Mail_c* mail_p,                        //
+                         mPr_catalog_order_c* catalog_orders_p, //
+                         Anmremail_c* remail_p,                 //
+                         mPr_animal_memory_c* animal_memory_p,  //
+                         mActor_name_t* pockets,                //
+                         u8 lotto_ticket_expiry,                //
+                         u8 lotto_ticket_mail_storage,          //
+                         u32 item_cond,                         //
+                         u32 wallet,                            //
+                         mQst_delivery_c* delivery,             //
+                         mQst_errand_c* errand,                 //
+                         Mail_c* mail,                          //
+                         mPr_catalog_order_c* catalog_orders,   //
+                         Anmremail_c* remail,                   //
+                         mPr_animal_memory_c* animal_memory     //
 ) {
     int i;
 
@@ -6170,30 +6195,13 @@ static void mCD_ClearPrivateItem(Private_c* priv, mCD_PrivateItem_c* privItem) {
         bzero(privItem, sizeof(mCD_PrivateItem_c));
         mCD_CopyKeep(
             // dst
-            privItem->items,
-            &privItem->ticket_expiry_month,
-            &privItem->ticket_storage,
-            &privItem->item_cond,
-            &privItem->wallet,
-            privItem->delivery,
-            privItem->errand,
-            privItem->mail,
-            privItem->catalog_order,
-            &privItem->remail,
-            &privItem->animal_memory,
+            privItem->items, &privItem->ticket_expiry_month, &privItem->ticket_storage, &privItem->item_cond,
+            &privItem->wallet, privItem->delivery, privItem->errand, privItem->mail, privItem->catalog_order,
+            &privItem->remail, &privItem->animal_memory,
             // src
-            priv->inventory.pockets,
-            priv->inventory.lotto_ticket_expiry_month,
-            priv->inventory.lotto_ticket_mail_storage,
-            priv->inventory.item_conditions,
-            priv->inventory.wallet,
-            priv->deliveries,
-            priv->errands,
-            priv->mail,
-            priv->catalog_orders,
-            &priv->remail,
-            &priv->animal_memory
-        );
+            priv->inventory.pockets, priv->inventory.lotto_ticket_expiry_month,
+            priv->inventory.lotto_ticket_mail_storage, priv->inventory.item_conditions, priv->inventory.wallet,
+            priv->deliveries, priv->errands, priv->mail, priv->catalog_orders, &priv->remail, &priv->animal_memory);
 
         privItem->_0FF0 = TRUE;
     }
@@ -6215,30 +6223,13 @@ static void mCD_ReplaceKeep(Private_c* priv, mCD_PrivateItem_c* privItem) {
     if (privItem != NULL && privItem->_0FF0 == TRUE) {
         mCD_CopyKeep(
             // dst
-            priv->inventory.pockets,
-            &priv->inventory.lotto_ticket_expiry_month,
-            &priv->inventory.lotto_ticket_mail_storage,
-            &priv->inventory.item_conditions,
-            &priv->inventory.wallet,
-            priv->deliveries,
-            priv->errands,
-            priv->mail,
-            priv->catalog_orders,
-            &priv->remail,
-            &priv->animal_memory,
+            priv->inventory.pockets, &priv->inventory.lotto_ticket_expiry_month,
+            &priv->inventory.lotto_ticket_mail_storage, &priv->inventory.item_conditions, &priv->inventory.wallet,
+            priv->deliveries, priv->errands, priv->mail, priv->catalog_orders, &priv->remail, &priv->animal_memory,
             // src
-            privItem->items,
-            privItem->ticket_expiry_month,
-            privItem->ticket_storage,
-            privItem->item_cond,
-            privItem->wallet,
-            privItem->delivery,
-            privItem->errand,
-            privItem->mail,
-            privItem->catalog_order,
-            &privItem->remail,
-            &privItem->animal_memory
-        );
+            privItem->items, privItem->ticket_expiry_month, privItem->ticket_storage, privItem->item_cond,
+            privItem->wallet, privItem->delivery, privItem->errand, privItem->mail, privItem->catalog_order,
+            &privItem->remail, &privItem->animal_memory);
     }
 }
 
@@ -6525,7 +6516,7 @@ extern int mCD_SaveStation_NextLand_bg(s32* chan) {
         mCD_SaveStation_NextLand_write_others,
     };
     // clang-format on
-    
+
     mCD_memMgr_card_info_c* cardInfo;
     mCD_memMgr_c* mgr = &l_memMgr;
     mCD_memMgr_fileInfo_c* fileInfo = &mgr->save_home_info;
@@ -6536,7 +6527,7 @@ extern int mCD_SaveStation_NextLand_bg(s32* chan) {
     if (mgr->_018C == 0) {
         if (proc < 10) {
             int res;
-            
+
             res = (*save_proc[proc])(mgr, fileInfo);
             if (res == mCD_RESULT_SUCCESS) {
                 if (fileInfo->proc == 10) {
@@ -6544,7 +6535,7 @@ extern int mCD_SaveStation_NextLand_bg(s32* chan) {
                     ret = mCD_TRANS_ERR_NONE;
                 }
             } else if (res != mCD_RESULT_BUSY) {
-                ret= fileInfo->_04;
+                ret = fileInfo->_04;
                 *chan = mgr->chan;
                 if (ret == 0) {
                     ret = mCD_TRANS_ERR_IOERROR;
@@ -6747,7 +6738,8 @@ static int mCD_SaveStation_Passport_write_main(mCD_memMgr_c* mgr, mCD_memMgr_fil
         if (mCD_load_file(mgr->workArea, mgr->loaded_file_type, (s32)mgr->chan, &card->result) == mCD_RESULT_SUCCESS) {
             res = mFRm_ReturnCheckSum((u16*)mgr->workArea, mgr->workArea_size);
             save = (Save_t*)mgr->workArea;
-            if (res == 0 && mLd_CheckId(save->land_info.id) == TRUE && mLd_CheckThisLand(save->land_info.name, save->land_info.id) == TRUE) {
+            if (res == 0 && mLd_CheckId(save->land_info.id) == TRUE &&
+                mLd_CheckThisLand(save->land_info.name, save->land_info.id) == TRUE) {
                 mgr->loaded_file_type = mCD_FILE_SAVE_MAIN;
                 ret = mCD_RESULT_SUCCESS;
             }
@@ -6804,7 +6796,8 @@ static int mCD_SaveStation_Passport_rewrite_main(mCD_memMgr_c* mgr, mCD_memMgr_f
         if (mCD_load_file(mgr->workArea, mgr->loaded_file_type, (s32)mgr->chan, &card->result) == mCD_RESULT_SUCCESS) {
             res = mFRm_ReturnCheckSum((u16*)mgr->workArea, mgr->workArea_size);
             save = (Save_t*)mgr->workArea;
-            if (res == 0 && mLd_CheckId(save->land_info.id) == TRUE && mLd_CheckThisLand(save->land_info.name, save->land_info.id) == TRUE) {
+            if (res == 0 && mLd_CheckId(save->land_info.id) == TRUE &&
+                mLd_CheckThisLand(save->land_info.name, save->land_info.id) == TRUE) {
                 mgr->loaded_file_type = mCD_FILE_SAVE_MAIN;
                 fileInfo->proc = 12;
                 ret = mCD_RESULT_SUCCESS;
@@ -6835,7 +6828,7 @@ static int mCD_SaveStation_Passport_make_file_name(mCD_memMgr_c* mgr, mCD_memMgr
         chan = 0;
     }
     card = &mgr->cards[chan];
-    
+
     bzero(cond, sizeof(cond));
     if (mCD_check_card(&card->result, mCD_MEMCARD_SECTORSIZE, chan) == mCD_RESULT_SUCCESS) {
         card->result = CARDMount(chan, card->workArea, NULL);
@@ -6891,7 +6884,8 @@ static int mCD_SaveStation_Passport_create_file(mCD_memMgr_c* mgr, mCD_memMgr_fi
     if (chan != -1) {
         card = &mgr->cards[chan];
         size = entry->filesize;
-        ret = mCD_create_file_bg(mgr->filename, CARD_ATTR_NO_MOVE | CARD_ATTR_NO_COPY, entry->filesize, (s32)chan, &card->result, &card->fileNo);
+        ret = mCD_create_file_bg(mgr->filename, CARD_ATTR_NO_MOVE | CARD_ATTR_NO_COPY, entry->filesize, (s32)chan,
+                                 &card->result, &card->fileNo);
         card->game_result = mCD_TransErrorCode(card->result);
         if (ret == mCD_RESULT_SUCCESS) {
             fileInfo->proc++;
@@ -6908,8 +6902,10 @@ static int mCD_SaveStation_Passport_create_file(mCD_memMgr_c* mgr, mCD_memMgr_fi
 
 static int mCD_SaveStation_Passport_set_icon_data(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
     static int icon_fileNo[mPr_SEX_NUM][mPr_FACE_TYPE_NUM] = {
-        {RESOURCE_BOY1, RESOURCE_BOY2, RESOURCE_BOY3, RESOURCE_BOY4, RESOURCE_BOY5, RESOURCE_BOY6, RESOURCE_BOY7, RESOURCE_BOY8},
-        {RESOURCE_GIRL1, RESOURCE_GIRL2, RESOURCE_GIRL3, RESOURCE_GIRL4, RESOURCE_GIRL5, RESOURCE_GIRL6, RESOURCE_GIRL7, RESOURCE_GIRL8},
+        { RESOURCE_BOY1, RESOURCE_BOY2, RESOURCE_BOY3, RESOURCE_BOY4, RESOURCE_BOY5, RESOURCE_BOY6, RESOURCE_BOY7,
+          RESOURCE_BOY8 },
+        { RESOURCE_GIRL1, RESOURCE_GIRL2, RESOURCE_GIRL3, RESOURCE_GIRL4, RESOURCE_GIRL5, RESOURCE_GIRL6,
+          RESOURCE_GIRL7, RESOURCE_GIRL8 },
     };
 
     mCD_memMgr_card_info_c* card;
@@ -6965,7 +6961,8 @@ static int mCD_SaveStation_Passport_write_passport(mCD_memMgr_c* mgr, mCD_memMgr
     card = &mgr->cards[chan];
     entry = &l_mcd_file_table[mgr->loaded_file_type];
     ofs = mCD_get_offset(mgr->loaded_file_type);
-    ret = mCD_write_comp_bg(mgr->workArea, mgr->filename, mgr->workArea_size, entry->filesize, ofs, chan, &card->result);
+    ret =
+        mCD_write_comp_bg(mgr->workArea, mgr->filename, mgr->workArea_size, entry->filesize, ofs, chan, &card->result);
 
     if (ret == mCD_RESULT_SUCCESS) {
         fileInfo->proc++;
@@ -6980,7 +6977,8 @@ static int mCD_SaveStation_Passport_write_passport(mCD_memMgr_c* mgr, mCD_memMgr
         if (mCD_load_file(mgr->workArea, mgr->loaded_file_type, mgr->chan, &card->result) == mCD_RESULT_SUCCESS) {
             res = mFRm_ReturnCheckSum((u16*)mgr->workArea, mgr->workArea_size);
             save = (Save_t*)mgr->workArea;
-            if (res == 0 && mLd_CheckId(save->land_info.id) == TRUE && mLd_CheckThisLand(save->land_info.name, save->land_info.id) == TRUE) {
+            if (res == 0 && mLd_CheckId(save->land_info.id) == TRUE &&
+                mLd_CheckThisLand(save->land_info.name, save->land_info.id) == TRUE) {
                 mgr->loaded_file_type = mCD_FILE_SAVE_MAIN;
                 ret = mCD_RESULT_SUCCESS;
             }
@@ -7013,7 +7011,8 @@ static int mCD_SaveStation_Passport_get_status(mCD_memMgr_c* mgr, mCD_memMgr_fil
     int ret;
 
     ret = mCD_RESULT_BUSY;
-    ret = mCD_get_status_common(mgr, fileInfo, mgr->filename, 0, CARD_COMMENT_SIZE, CARD_STAT_ICON_C8, CARD_STAT_SPEED_MIDDLE, 8, CARD_STAT_BANNER_C8);
+    ret = mCD_get_status_common(mgr, fileInfo, mgr->filename, 0, CARD_COMMENT_SIZE, CARD_STAT_ICON_C8,
+                                CARD_STAT_SPEED_MIDDLE, 8, CARD_STAT_BANNER_C8);
     if (ret == mCD_RESULT_ERROR) {
         ret = mCD_SaveStation_Passport_rewrite_main(mgr, fileInfo);
     }
@@ -7103,7 +7102,7 @@ extern int mCD_SaveStation_Passport_bg(s32* chan) {
         mCD_SaveStation_NextLand_write_others,
     };
     // clang-format on
-    
+
     mCD_memMgr_card_info_c* cardInfo;
     mCD_memMgr_c* mgr = &l_memMgr;
     mCD_memMgr_fileInfo_c* fileInfo = &mgr->save_home_info;
@@ -7114,7 +7113,7 @@ extern int mCD_SaveStation_Passport_bg(s32* chan) {
     if (mgr->_018C == 0) {
         if (proc < 15) {
             int res;
-            
+
             res = (*save_proc[proc])(mgr, fileInfo);
             if (res == mCD_RESULT_SUCCESS) {
                 if (fileInfo->proc == 15) {
@@ -7147,7 +7146,7 @@ extern int mCD_SaveStation_Passport_bg(s32* chan) {
             if (res == mCD_RESULT_ERROR || (res == mCD_RESULT_SUCCESS && fileInfo->proc == 15)) {
                 if (mgr->_0188 >= 112) {
                     sAdo_SysLevStop(NA_SE_47);
-                    
+
                     if (res == mCD_RESULT_SUCCESS && mLd_PlayerManKindCheck() == FALSE) {
                         mCD_create_famicom_file(mgr->chan);
                     }
@@ -7207,7 +7206,7 @@ extern void mCD_toNextLand(void) {
             bcopy(Common_GetPointer(time), &time, sizeof(time));
             bcopy(Common_GetPointer(transition), &transition, sizeof(transition));
             bzero(&common_data, sizeof(common_data_t));
-            
+
             // restore
             bcopy(&persis, Common_GetPointer(travel_persistent_data), sizeof(persis));
             Common_Set(last_field_id, last_field_id);
@@ -7260,19 +7259,22 @@ extern void mCD_toNextLand(void) {
             Common_Set(submenu_disabled, TRUE);
             bzero(&l_keepSave, sizeof(Save));
             l_keepSave_set = FALSE;
-            
+
             if (mFRm_ReturnCheckSum((u16*)&l_keepMail, l_aram_real_size_32_table[mCD_ARAM_DATA_MAIL]) == 0) {
-                mCD_save_data_main_to_aram(&l_keepMail, l_aram_real_size_32_table[mCD_ARAM_DATA_MAIL], mCD_ARAM_DATA_MAIL);
+                mCD_save_data_main_to_aram(&l_keepMail, l_aram_real_size_32_table[mCD_ARAM_DATA_MAIL],
+                                           mCD_ARAM_DATA_MAIL);
             }
             mCD_set_init_mail_data(&l_keepMail);
 
             if (mFRm_ReturnCheckSum((u16*)&l_keepOriginal, l_aram_real_size_32_table[mCD_ARAM_DATA_ORIGINAL]) == 0) {
-                mCD_save_data_main_to_aram(&l_keepOriginal, l_aram_real_size_32_table[mCD_ARAM_DATA_ORIGINAL], mCD_ARAM_DATA_ORIGINAL);
+                mCD_save_data_main_to_aram(&l_keepOriginal, l_aram_real_size_32_table[mCD_ARAM_DATA_ORIGINAL],
+                                           mCD_ARAM_DATA_ORIGINAL);
             }
             mCD_set_init_original_data(&l_keepOriginal);
 
             if (mFRm_ReturnCheckSum((u16*)&l_keepDiary, l_aram_real_size_32_table[mCD_ARAM_DATA_DIARY]) == 0) {
-                mCD_save_data_main_to_aram(&l_keepDiary, l_aram_real_size_32_table[mCD_ARAM_DATA_DIARY], mCD_ARAM_DATA_DIARY);
+                mCD_save_data_main_to_aram(&l_keepDiary, l_aram_real_size_32_table[mCD_ARAM_DATA_DIARY],
+                                           mCD_ARAM_DATA_DIARY);
             }
             mCD_set_init_diary_data(&l_keepDiary);
         }

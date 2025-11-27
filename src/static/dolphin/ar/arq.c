@@ -67,7 +67,7 @@ void __ARQServiceQueueLo(void)
 
 void __ARQCallbackHack(u32 unused) { }
 
-void __ARQInterruptServiceRoutine()
+void __ARQInterruptServiceRoutine(u32 ptrToRequest)
 {
 	if (__ARQCallbackHi) {
 		__ARQCallbackHi((u32)__ARQRequestPendingHi);

@@ -2,16 +2,18 @@
 #include <dolphin/dvd.h>
 #include "dvd/__dvd.h"
 #include "os/__os.h"
+#include "types.h"
 
 static void* SaveStart = NULL;
 static void* SaveEnd   = NULL;
 static volatile BOOL Prepared;
 
-extern u32 OS_RESET_CODE AT_ADDRESS(0x800030F0);
+//defined in lcf
+#define OS_RESET_CODE AT_ADDRESS_STRUCT(u32, 0x800030F0)
 // unknown function, set to true by __OSReboot
-extern u8 OS_REBOOT_BOOL AT_ADDRESS(0x800030E2);
-extern u32 UNK_817FFFF8 AT_ADDRESS(0x817FFFF8);
-extern u32 UNK_817FFFFC AT_ADDRESS(0x817FFFFC);
+#define OS_REBOOT_BOOL AT_ADDRESS_STRUCT(u8, 0x800030E2)
+#define UNK_817FFFF8 AT_ADDRESS_STRUCT(u32, 0x817FFFF8)
+#define UNK_817FFFFC AT_ADDRESS_STRUCT(u32, 0x817FFFFC)
 
 #define OS_BOOTROM_ADDR ((void*)0x81300000)
 

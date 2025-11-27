@@ -1,9 +1,11 @@
-.include "macros.inc"
+; .include "macros.inc"
 .section .init, "ax"
 .global gTRKInterruptVectorTable
+.extern TRKInterruptHandler
+.extern __TRK_reset
 gTRKInterruptVectorTable:
 
-/* 80003534 4D657472 */ .4byte      0x4d657472
+/* 80003534 4D657472 */ .long      0x4d657472
 /* 80003538 6F776572 */ xoris       r23, r27, 0x6572
 /* 8000353C 6B732054 */ xori        r19, r27, 0x2054
 /* 80003540 61726765 */ ori         r18, r11, 0x6765
@@ -14,12 +16,12 @@ gTRKInterruptVectorTable:
 /* 80003554 6C20666F */ xoris       r0, r1, 0x666f
 /* 80003558 7220506F */ andi.       r0, r17, 0x506f
 /* 8000355C 77657250 */ andis.      r5, r27, 0x7250
-/* 80003560 43000000 */ .4byte      0x43000000
+/* 80003560 43000000 */ .long      0x43000000
 
 .fill 0xD0
 
 b __TRK_reset
-    
+
 .fill 0xFC
 /* 80004580 00000680  7C 51 43 A6 */	mtspr 0x111, r2
 /* 80004584 00000684  7C 5A 02 A6 */	mfspr r2, 0x1a
@@ -39,7 +41,7 @@ b __TRK_reset
 /* 800045BC 000006BC  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800045C0 000006C0  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800045C4 000006C4  38 60 02 00 */	li r3, 0x200
-/* 800045C8 000006C8  4C 00 00 64 */	rfi 
+/* 800045C8 000006C8  4C 00 00 64 */	rfi
 .fill 0xB4
 
 
@@ -55,7 +57,7 @@ b __TRK_reset
 /* 800046A4 000007A4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800046A8 000007A8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800046AC 000007AC  38 60 03 00 */	li r3, 0x300
-/* 800046B0 000007B0  4C 00 00 64 */	rfi 
+/* 800046B0 000007B0  4C 00 00 64 */	rfi
 .fill 0xCC
 
 
@@ -71,7 +73,7 @@ b __TRK_reset
 /* 800047A4 000008A4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800047A8 000008A8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800047AC 000008AC  38 60 04 00 */	li r3, 0x400
-/* 800047B0 000008B0  4C 00 00 64 */	rfi 
+/* 800047B0 000008B0  4C 00 00 64 */	rfi
 .fill 0xCC
 
 
@@ -87,7 +89,7 @@ b __TRK_reset
 /* 800048A4 000009A4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800048A8 000009A8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800048AC 000009AC  38 60 05 00 */	li r3, 0x500
-/* 800048B0 000009B0  4C 00 00 64 */	rfi 
+/* 800048B0 000009B0  4C 00 00 64 */	rfi
 .fill 0xCC
 
 
@@ -103,7 +105,7 @@ b __TRK_reset
 /* 800049A4 00000AA4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800049A8 00000AA8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800049AC 00000AAC  38 60 06 00 */	li r3, 0x600
-/* 800049B0 00000AB0  4C 00 00 64 */	rfi 
+/* 800049B0 00000AB0  4C 00 00 64 */	rfi
 .fill 0xCC
 
 
@@ -119,7 +121,7 @@ b __TRK_reset
 /* 80004AA4 00000BA4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 80004AA8 00000BA8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 80004AAC 00000BAC  38 60 07 00 */	li r3, 0x700
-/* 80004AB0 00000BB0  4C 00 00 64 */	rfi 
+/* 80004AB0 00000BB0  4C 00 00 64 */	rfi
 .fill 0xCC
 
 
@@ -135,7 +137,7 @@ b __TRK_reset
 /* 80004BA4 00000CA4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 80004BA8 00000CA8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 80004BAC 00000CAC  38 60 08 00 */	li r3, 0x800
-/* 80004BB0 00000CB0  4C 00 00 64 */	rfi 
+/* 80004BB0 00000CB0  4C 00 00 64 */	rfi
 .fill 0xCC
 
 /* 80004C80 00000D80  7C 51 43 A6 */	mtspr 0x111, r2
@@ -150,12 +152,12 @@ b __TRK_reset
 /* 80004CA4 00000DA4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 80004CA8 00000DA8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 80004CAC 00000DAC  38 60 09 00 */	li r3, 0x900
-/* 80004CB0 00000DB0  4C 00 00 64 */	rfi 
+/* 80004CB0 00000DB0  4C 00 00 64 */	rfi
 .fill 0xCC
 
 
-.fill 0x100 
-.fill 0x100 
+.fill 0x100
+.fill 0x100
 
 /* 80004F80 00001080  7C 51 43 A6 */	mtspr 0x111, r2
 /* 80004F84 00001084  7C 72 43 A6 */	mtspr 0x112, r3
@@ -169,7 +171,7 @@ b __TRK_reset
 /* 80004FA4 000010A4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 80004FA8 000010A8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 80004FAC 000010AC  38 60 0C 00 */	li r3, 0xc00
-/* 80004FB0 000010B0  4C 00 00 64 */	rfi 
+/* 80004FB0 000010B0  4C 00 00 64 */	rfi
 .fill 0xCC
 
 
@@ -185,7 +187,7 @@ b __TRK_reset
 /* 800050A4 000011A4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800050A8 000011A8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800050AC 000011AC  38 60 0D 00 */	li r3, 0xd00
-/* 800050B0 000011B0  4C 00 00 64 */	rfi 
+/* 800050B0 000011B0  4C 00 00 64 */	rfi
 .fill 0xCC
 
 
@@ -203,7 +205,7 @@ b __TRK_reset
 /* 800051A4 000012A4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800051A8 000012A8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800051AC 000012AC  38 60 0E 00 */	li r3, 0xe00
-/* 800051B0 000012B0  4C 00 00 64 */	rfi 
+/* 800051B0 000012B0  4C 00 00 64 */	rfi
 .fill 0xCC
 
 
@@ -221,7 +223,7 @@ b __TRK_reset
 /* 800052C4 000013C4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800052C8 000013C8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800052CC 000013CC  38 60 0F 20 */	li r3, 0xf20
-/* 800052D0 000013D0  4C 00 00 64 */	rfi 
+/* 800052D0 000013D0  4C 00 00 64 */	rfi
 .L_800052D4:
 /* 800052D4 000013D4  7C 51 43 A6 */	mtspr 0x111, r2
 /* 800052D8 000013D8  7C 72 43 A6 */	mtspr 0x112, r3
@@ -235,7 +237,7 @@ b __TRK_reset
 /* 800052F8 000013F8  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800052FC 000013FC  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 80005300 00001400  38 60 0F 00 */	li r3, 0xf00
-/* 80005304 00001404  4C 00 00 64 */	rfi 
+/* 80005304 00001404  4C 00 00 64 */	rfi
 .fill 0x78
 
 /* 80005380 00001480  7C 51 43 A6 */	mtspr 0x111, r2
@@ -246,9 +248,9 @@ b __TRK_reset
 /* 80005394 00001494  41 82 00 1C */	beq .L_800053B0
 /* 80005398 00001498  7C 40 00 A6 */	mfmsr r2
 /* 8000539C 0000149C  6C 42 00 02 */	xoris r2, r2, 2
-/* 800053A0 000014A0  7C 00 04 AC */	sync 0
+/* 800053A0 000014A0  7C 00 04 AC */	sync
 /* 800053A4 000014A4  7C 40 01 24 */	mtmsr r2
-/* 800053A8 000014A8  7C 00 04 AC */	sync 0
+/* 800053A8 000014A8  7C 00 04 AC */	sync
 /* 800053AC 000014AC  7C 51 43 A6 */	mtspr 0x111, r2
 .L_800053B0:
 /* 800053B0 000014B0  7C 52 42 A6 */	mfspr r2, 0x112
@@ -266,7 +268,7 @@ b __TRK_reset
 /* 800053E0 000014E0  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800053E4 000014E4  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800053E8 000014E8  38 60 10 00 */	li r3, 0x1000
-/* 800053EC 000014EC  4C 00 00 64 */	rfi 
+/* 800053EC 000014EC  4C 00 00 64 */	rfi
 .fill 0x90
 
 
@@ -278,9 +280,9 @@ b __TRK_reset
 /* 80005494 00001594  41 82 00 1C */	beq .L_800054B0
 /* 80005498 00001598  7C 40 00 A6 */	mfmsr r2
 /* 8000549C 0000159C  6C 42 00 02 */	xoris r2, r2, 2
-/* 800054A0 000015A0  7C 00 04 AC */	sync 0
+/* 800054A0 000015A0  7C 00 04 AC */	sync
 /* 800054A4 000015A4  7C 40 01 24 */	mtmsr r2
-/* 800054A8 000015A8  7C 00 04 AC */	sync 0
+/* 800054A8 000015A8  7C 00 04 AC */	sync
 /* 800054AC 000015AC  7C 51 43 A6 */	mtspr 0x111, r2
 .L_800054B0:
 /* 800054B0 000015B0  7C 52 42 A6 */	mfspr r2, 0x112
@@ -298,7 +300,7 @@ b __TRK_reset
 /* 800054E0 000015E0  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800054E4 000015E4  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800054E8 000015E8  38 60 11 00 */	li r3, 0x1100
-/* 800054EC 000015EC  4C 00 00 64 */	rfi 
+/* 800054EC 000015EC  4C 00 00 64 */	rfi
 .fill 0x90
 
 
@@ -310,9 +312,9 @@ b __TRK_reset
 /* 80005594 00001694  41 82 00 1C */	beq .L_800055B0
 /* 80005598 00001698  7C 40 00 A6 */	mfmsr r2
 /* 8000559C 0000169C  6C 42 00 02 */	xoris r2, r2, 2
-/* 800055A0 000016A0  7C 00 04 AC */	sync 0
+/* 800055A0 000016A0  7C 00 04 AC */	sync
 /* 800055A4 000016A4  7C 40 01 24 */	mtmsr r2
-/* 800055A8 000016A8  7C 00 04 AC */	sync 0
+/* 800055A8 000016A8  7C 00 04 AC */	sync
 /* 800055AC 000016AC  7C 51 43 A6 */	mtspr 0x111, r2
 .L_800055B0:
 /* 800055B0 000016B0  7C 52 42 A6 */	mfspr r2, 0x112
@@ -330,7 +332,7 @@ b __TRK_reset
 /* 800055E0 000016E0  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800055E4 000016E4  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800055E8 000016E8  38 60 12 00 */	li r3, 0x1200
-/* 800055EC 000016EC  4C 00 00 64 */	rfi 
+/* 800055EC 000016EC  4C 00 00 64 */	rfi
 .fill 0x90
 
 
@@ -346,7 +348,7 @@ b __TRK_reset
 /* 800056A4 000017A4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800056A8 000017A8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800056AC 000017AC  38 60 13 00 */	li r3, 0x1300
-/* 800056B0 000017B0  4C 00 00 64 */	rfi 
+/* 800056B0 000017B0  4C 00 00 64 */	rfi
 .fill 0xCC
 
 
@@ -362,7 +364,7 @@ b __TRK_reset
 /* 800057A4 000018A4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800057A8 000018A8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800057AC 000018AC  38 60 14 00 */	li r3, 0x1400
-/* 800057B0 000018B0  4C 00 00 64 */	rfi 
+/* 800057B0 000018B0  4C 00 00 64 */	rfi
 .fill 0x1CC
 
 
@@ -378,7 +380,7 @@ b __TRK_reset
 /* 800059A4 00001AA4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800059A8 00001AA8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800059AC 00001AAC  38 60 16 00 */	li r3, 0x1600
-/* 800059B0 00001AB0  4C 00 00 64 */	rfi 
+/* 800059B0 00001AB0  4C 00 00 64 */	rfi
 .fill 0xCC
 
 
@@ -394,7 +396,7 @@ b __TRK_reset
 /* 80005AA4 00001BA4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 80005AA8 00001BA8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 80005AAC 00001BAC  38 60 17 00 */	li r3, 0x1700
-/* 80005AB0 00001BB0  4C 00 00 64 */	rfi 
+/* 80005AB0 00001BB0  4C 00 00 64 */	rfi
 .fill 0x4CC
 
 
@@ -410,7 +412,7 @@ b __TRK_reset
 /* 80005FA4 000020A4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 80005FA8 000020A8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 80005FAC 000020AC  38 60 1C 00 */	li r3, 0x1c00
-/* 80005FB0 000020B0  4C 00 00 64 */	rfi 
+/* 80005FB0 000020B0  4C 00 00 64 */	rfi
 .fill 0xCC
 
 
@@ -426,7 +428,7 @@ b __TRK_reset
 /* 800060A4 000021A4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800060A8 000021A8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800060AC 000021AC  38 60 1D 00 */	li r3, 0x1d00
-/* 800060B0 000021B0  4C 00 00 64 */	rfi 
+/* 800060B0 000021B0  4C 00 00 64 */	rfi
 .fill 0xCC
 
 
@@ -442,7 +444,7 @@ b __TRK_reset
 /* 800061A4 000022A4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800061A8 000022A8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800061AC 000022AC  38 60 1E 00 */	li r3, 0x1e00
-/* 800061B0 000022B0  4C 00 00 64 */	rfi 
+/* 800061B0 000022B0  4C 00 00 64 */	rfi
 .fill 0xCC
 
 
@@ -458,5 +460,5 @@ b __TRK_reset
 /* 800062A4 000023A4  60 63 F5 CC */	ori r3, r3, TRKInterruptHandler@l
 /* 800062A8 000023A8  7C 7A 03 A6 */	mtspr 0x1a, r3
 /* 800062AC 000023AC  38 60 1F 00 */	li r3, 0x1f00
-/* 800062B0 000023B0  4C 00 00 64 */	rfi 
+/* 800062B0 000023B0  4C 00 00 64 */	rfi
 gTRKInterruptVectorTableEnd:

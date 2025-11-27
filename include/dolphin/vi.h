@@ -69,8 +69,12 @@ typedef enum
 typedef void (*VIRetraceCallback)(u32 retraceCount);
 
 #define VIPadFrameBufferWidth(width) ((u16)(((u16)(width) + 15) & ~15))
+// Forward declaration of struct tag
+struct _GXRenderModeObj;
 
-void VIConfigure(const struct _GXRenderModeObj *rm);
+// Typedef alias
+typedef struct _GXRenderModeObj GXRenderModeObj;
+void VIConfigure(const GXRenderModeObj *rm);
 
 void VISetBlack(BOOL);
 void VIWaitForRetrace();

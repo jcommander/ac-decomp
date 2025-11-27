@@ -163,8 +163,6 @@ unsigned long OSGetConsoleType()
 	return BootInfo->consoleType;
 }
 
-volatile u16 __OSDeviceCode AT_ADDRESS(0x800030E6);
-
 static void ClearArena()
 {
 	if (OSGetResetCode() != -0x80000000) {

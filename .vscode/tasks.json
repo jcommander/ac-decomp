@@ -1,16 +1,39 @@
 {
-  // Use Ctrl+Shift+B to run build tasks.
-  // Or "Run Build Task" in the Command Palette.
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "ninja",
-      "type": "shell",
-      "command": "ninja",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
-    },
-  ]
+    // Use Ctrl+Shift+B to run build tasks.
+    // Or "Run Build Task" in the Command Palette.
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build, Copy, Run",
+            "type": "shell",
+            "command": "./buildsteps.sh.bat",
+            "windows": {
+                "command": ".\\buildsteps.sh.bat"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Build, Copy (Don't Run)",
+            "type": "shell",
+            "command": "./buildsteps.sh.bat",
+            "windows": {
+                "command": ".\\buildsteps.sh.bat"
+            },
+            "args": ["--skip-run"],
+            "group": "build"
+        },
+        {
+            "label": "Run (Don't Build or Copy)",
+            "type": "shell",
+            "command": "./buildsteps.sh.bat",
+            "windows": {
+                "command": ".\\buildsteps.sh.bat"
+            },
+            "args": ["--skip-build", "--skip-copy"],
+            "group": "build"
+        },
+    ]
 }

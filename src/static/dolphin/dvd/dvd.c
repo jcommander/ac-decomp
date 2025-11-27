@@ -35,7 +35,7 @@ static int DVDInitialized;
 static OSAlarm ResetAlarm;
 void (* LastState)(struct DVDCommandBlock *);
 
-static void stateReadingFST();
+static void stateReadingFST(DVDCommandBlock* command);
 static void cbForStateReadingFST(unsigned long intType);
 static void stateError();
 static void stateGettingError();
@@ -99,7 +99,7 @@ void DVDInit() {
     }
 }
 
-static void stateReadingFST() {
+static void stateReadingFST(DVDCommandBlock* command) {
     LastState = stateReadingFST;
     ASSERTLINE(0x23A, ((u32)(bootInfo->FSTLocation) & (32 - 1)) == 0);
     DVDLowRead(bootInfo->FSTLocation, (u32)(tmpBuffer[2] + 0x1F) & 0xFFFFFFE0, (u32)tmpBuffer[1], cbForStateReadingFST);
@@ -176,7 +176,7 @@ static unsigned long CategorizeError(unsigned long error) {
         LastError = error;
         return 1;
     }
-    
+
     error &= 0x00FFFFFF;
     if ((error == 0x62800) || (error == 0x23A00) || (error == 0xB5A01)) {
         return 0;
@@ -440,7 +440,7 @@ static void cbForStateCheckID2(unsigned long intType) {
     if (intType & DVD_INTTYPE_TC) {
         ASSERTLINE(0x49E, (intType & DVD_INTTYPE_DE) == 0);
         NumInternalRetry = 0;
-        stateReadingFST();
+        stateReadingFST(NULL);
         return;
     }
     ASSERTLINE(0x4AF, intType == DVD_INTTYPE_DE);
@@ -696,7 +696,7 @@ static void cbForStateBusy(unsigned long intType) {
         return;
     }
     ASSERTLINE(0x689, (intType & DVD_INTTYPE_CVR) == 0);
-    if ((CurrCommand == DVD_COMMAND_READ) || (CurrCommand == DVD_COMMAND_BSREAD) 
+    if ((CurrCommand == DVD_COMMAND_READ) || (CurrCommand == DVD_COMMAND_BSREAD)
         || (CurrCommand == DVD_COMMAND_READID) || (CurrCommand == DVD_COMMAND_INQUIRY)) {
         executing->transferredSize += executing->currTransferSize - __DIRegs[6];
     }
@@ -721,7 +721,7 @@ static void cbForStateBusy(unsigned long intType) {
             return;
         }
 
-        if (CurrCommand == DVD_COMMAND_READ || CurrCommand == DVD_COMMAND_BSREAD 
+        if (CurrCommand == DVD_COMMAND_READ || CurrCommand == DVD_COMMAND_BSREAD
             || CurrCommand == DVD_COMMAND_READID || CurrCommand == DVD_COMMAND_INQUIRY) {
             if (executing->transferredSize != executing->length) {
                 stateBusy(executing);
@@ -735,9 +735,9 @@ static void cbForStateBusy(unsigned long intType) {
             }
             stateReady();
             return;
-        } else if (CurrCommand == DVD_COMMAND_REQUEST_AUDIO_ERROR || CurrCommand == DVD_COMMAND_REQUEST_PLAY_ADDR 
+        } else if (CurrCommand == DVD_COMMAND_REQUEST_AUDIO_ERROR || CurrCommand == DVD_COMMAND_REQUEST_PLAY_ADDR
             || CurrCommand == DVD_COMMAND_REQUEST_START_ADDR || CurrCommand == DVD_COMMAND_REQUEST_LENGTH) {
-            
+
             if (CurrCommand == DVD_COMMAND_REQUEST_START_ADDR || CurrCommand == DVD_COMMAND_REQUEST_PLAY_ADDR) {
                 result = __DIRegs[8] * 4;
             } else {
@@ -821,7 +821,7 @@ static int issueCommand(long prio, struct DVDCommandBlock * block) {
     int level;
     int result;
 
-    if (autoInvalidation != 0 && (block->command == DVD_COMMAND_READ || block->command == DVD_COMMAND_BSREAD 
+    if (autoInvalidation != 0 && (block->command == DVD_COMMAND_READ || block->command == DVD_COMMAND_BSREAD
         || block->command == DVD_COMMAND_READID || block->command == DVD_COMMAND_INQUIRY)) {
         DCInvalidateRange(block->addr, block->length);
     }
@@ -938,7 +938,7 @@ long DVDCancelStream(struct DVDCommandBlock * block) {
 
     result = DVDCancelStreamAsync(block, cbForCancelStreamSync);
     if (result == 0) {
-        return -1; 
+        return -1;
     }
     enabled = OSDisableInterrupts();
 
@@ -947,11 +947,11 @@ long DVDCancelStream(struct DVDCommandBlock * block) {
         if (state == DVD_STATE_END || state == DVD_STATE_FATAL_ERROR || state == DVD_STATE_CANCELED) {
             retVal = block->transferredSize;
             break;
-        } 
+        }
 
         OSSleepThread(&__DVDThreadQueue);
     }
-    
+
     OSRestoreInterrupts(enabled);
     return retVal;
 }
@@ -978,7 +978,7 @@ long DVDStopStreamAtEnd(struct DVDCommandBlock * block) {
 
     result = DVDStopStreamAtEndAsync(block, cbForStopStreamAtEndSync);
     if (result == 0) {
-        return -1; 
+        return -1;
     }
     enabled = OSDisableInterrupts();
 
@@ -987,7 +987,7 @@ long DVDStopStreamAtEnd(struct DVDCommandBlock * block) {
         if (state == DVD_STATE_END || state == DVD_STATE_FATAL_ERROR || state == DVD_STATE_CANCELED) {
             retVal = block->transferredSize;
             break;
-        } 
+        }
 
         OSSleepThread(&__DVDThreadQueue);
     }
@@ -1026,7 +1026,7 @@ long DVDGetStreamErrorStatus(struct DVDCommandBlock * block) {
         if (state == DVD_STATE_END || state == DVD_STATE_FATAL_ERROR || state == DVD_STATE_CANCELED) {
             retVal = block->transferredSize;
             break;
-        } 
+        }
 
         OSSleepThread(&__DVDThreadQueue);
     }
@@ -1065,7 +1065,7 @@ long DVDGetStreamPlayAddr(struct DVDCommandBlock * block) {
         if (state == DVD_STATE_END || state == DVD_STATE_FATAL_ERROR || state == DVD_STATE_CANCELED) {
             retVal = block->transferredSize;
             break;
-        } 
+        }
 
         OSSleepThread(&__DVDThreadQueue);
     }
@@ -1104,7 +1104,7 @@ long DVDGetStreamStartAddr(struct DVDCommandBlock * block) {
         if (state == DVD_STATE_END || state == DVD_STATE_FATAL_ERROR || state == DVD_STATE_CANCELED) {
             retVal = block->transferredSize;
             break;
-        } 
+        }
 
         OSSleepThread(&__DVDThreadQueue);
     }
@@ -1143,7 +1143,7 @@ long DVDGetStreamLength(struct DVDCommandBlock * block) {
         if (state == DVD_STATE_END || state == DVD_STATE_FATAL_ERROR || state == DVD_STATE_CANCELED) {
             retVal = block->transferredSize;
             break;
-        } 
+        }
 
         OSSleepThread(&__DVDThreadQueue);
     }
@@ -1256,7 +1256,7 @@ long DVDInquiry(struct DVDCommandBlock * block, struct DVDDriveInfo * info) {
         if (state == DVD_STATE_END) {
             retVal = (u32)block->transferredSize;
             break;
-        } else if (state == DVD_STATE_FATAL_ERROR) { 
+        } else if (state == DVD_STATE_FATAL_ERROR) {
             retVal = -1;
             break;
         } else if (state == DVD_STATE_CANCELED) {
@@ -1305,7 +1305,7 @@ long DVDGetCommandBlockStatus(const struct DVDCommandBlock * block) {
 long DVDGetDriveStatus() {
 	BOOL enabled = OSDisableInterrupts();
 	s32 retVal;
-    
+
 	if (FatalErrorFlag != FALSE) {
 		retVal = DVD_STATE_FATAL_ERROR;
 	} else {

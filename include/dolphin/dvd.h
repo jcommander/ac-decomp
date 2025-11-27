@@ -224,8 +224,7 @@ void DVDDumpWaitingQueue();
 
 #define DVD_WATYPE_MAX 2
 
-DVDDiskID DiskID AT_ADDRESS(0x80000000);
-
+#define DiskID AT_ADDRESS_STRUCT(DVDDiskID, 0x80000000)
 //////////////////////////////////
 
 #ifdef __cplusplus

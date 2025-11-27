@@ -611,7 +611,7 @@ static int aNSC_pc_check_password_user(mMpswd_password_c* pswd) {
 
 static int aNSC_pc_check_password(NPC_SHOP_COMMON_ACTOR* shop_common) {
     static aNSC_PC_CHECK_PASSWORD_PROC pc_check_password_proc[6] = {
-        aNSC_pc_check_password_famicom,  aNSC_pc_check_password_npc,         aNSC_pc_check_password_card_e,
+        aNSC_pc_check_password_famicom,  aNSC_pc_check_password_npc,  aNSC_pc_check_password_card_e,
         aNSC_pc_check_password_magazine, aNSC_pc_check_password_user, aNSC_pc_check_password_card_e_mini,
     };
 
@@ -1675,7 +1675,7 @@ static void aNSC_set_talk_info_start_wait(ACTOR* actorx) {
     shop_common->next_action = 1;
 }
 
-static void aNSC_set_talk_info_start_wait1() {
+static void aNSC_set_talk_info_start_wait1(ACTOR* actorx) {
     int msg_no = 0;
 
     u8 player_no = Common_Get(player_no);
@@ -1987,7 +1987,7 @@ static void aNSC_present_balloon_end_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GA
 
 #endif
 
-static void aNSC_set_talk_info_request_Q_start_wait() {
+static void aNSC_set_talk_info_request_Q_start_wait(ACTOR* actorx) {
     mDemo_Set_msg_num(aNSC_get_msg_no(aNSC_MSG_INTERACT_START));
     mDemo_Set_talk_turn(0x0);
 }
@@ -2822,7 +2822,7 @@ static void aNSC_turn(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     }
 }
 
-static void aNSC_set_talk_info_goodbye_wait() {
+static void aNSC_set_talk_info_goodbye_wait(ACTOR* actorx) {
     mDemo_Set_msg_num(aNSC_get_msg_no(aNSC_MSG_SAY_GOODBYE));
     mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
 }
@@ -3322,7 +3322,7 @@ static void aNSC_setupAction(NPC_SHOP_COMMON_ACTOR *shop_common, GAME_PLAY *play
 		aNSC_say_goodbye,
 		aNSC_exit_wait
     };
-    shop_common->action = action; 
+    shop_common->action = action;
     shop_common->proc = process[action];
     aNSC_set_animation(shop_common, action);
     aNSC_init_proc(shop_common, play, action);

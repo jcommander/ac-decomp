@@ -132,7 +132,7 @@ static void aNHM_change_talk_proc(NPC_HEM_ACTOR* hem, int talk_idx) {
     hem->talk_proc = process[talk_idx];
 }
 
-static void aNHM_set_force_talk_info_talk_request() {
+static void aNHM_set_force_talk_info_talk_request(ACTOR* actor) {
     mDemo_Set_msg_num(MSG_HEM_GOLD_AXE1);
     mPr_SetFreePossessionItem(Now_Private, ITM_GOLDEN_AXE, mPr_ITEM_COND_NORMAL);
     mSC_trophy_set(mSC_TROPHY_GOLDEN_AXE);
@@ -161,7 +161,7 @@ static BOOL aNHM_talk_init(ACTOR* actorx, GAME* game) {
 static BOOL aNHM_talk_end_chk(ACTOR* actorx, GAME* game) {
     NPC_HEM_ACTOR* hem = (NPC_HEM_ACTOR*)actorx;
     BOOL ret = FALSE;
-    
+
     hem->talk_proc(hem, (GAME_PLAY*)game);
     if (!mDemo_Check(mDemo_TYPE_SPEAK, actorx)) {
         ret = TRUE;

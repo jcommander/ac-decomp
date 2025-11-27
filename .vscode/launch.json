@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Attach powerpc-eabi-gdb -> gdbserver (localhost:16969)",
+            "type": "gdb",
+            "request": "attach",
+            "target": "localhost:16969",
+            "remote": true,
+            "gdbpath": "<ABS_PATH_TO> gdb-multiarch.exe", // adjust to your path or Windows exe
+            "executable": "<ABS_PATH_TO> build/GAFE01_00/static.elf", // ELF with symbols (DWARF)
+            "cwd": "${workspaceFolder}",
+            "autorun": [
+                "set architecture auto",
+                "set endian big",
+                "set pagination off",
+                "set print pretty on"
+            ],
+            "valuesFormatting": "prettyPrinters"
+        }
+    ]
+}

@@ -179,7 +179,7 @@ inline static void KillThreads(void)
 	}
 }
 
-extern u8 OS_REBOOT_BOOL AT_ADDRESS(0x800030E2);
+#define OS_REBOOT_BOOL AT_ADDRESS_STRUCT(u8, 0x800030E2)
 
 void OSResetSystem(int reset, unsigned long resetCode, int forceMenu)
 {

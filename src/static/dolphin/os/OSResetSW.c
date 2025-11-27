@@ -4,7 +4,7 @@
 
 #include "os/__os.h"
 
-u8 GameChoice AT_ADDRESS(OS_BASE_CACHED | 0x30E3);
+#define GameChoice (*(u8 *)(OS_BASE_CACHED | 0x30E3))
 
 static OSResetCallback ResetCallback;
 

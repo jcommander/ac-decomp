@@ -678,6 +678,12 @@ def generate_build_ninja(
     mwld_cmd = f"{wrapper_cmd}{mwld} $ldflags -o $out @$out.rsp"
     mwld_implicit: List[Optional[Path]] = [compilers_implicit or mwld, wrapper_implicit]
 
+    # MW as
+    mwasm = compiler_path / "mwasmeppc.exe"
+    mwasm_cmd = f"{mwasm} $asflags $in -o $out"
+    mwasm_implicit: List[Optional[Path]] = [compilers_implicit or mwasm, wrapper_implicit]
+    mwasm_implicit.append(build_path / "include" / "macros.inc")
+
     # GNU as
     gnu_as = binutils / f"powerpc-eabi-as{EXE}"
     gnu_as_cmd = (
@@ -759,7 +765,7 @@ def generate_build_ninja(
     n.comment("Assemble asm")
     n.rule(
         name="as",
-        command=gnu_as_cmd,
+        command=mwasm_cmd,
         description="AS $out",
         # See https://github.com/encounter/dtk-template/issues/51
         # depfile="$out.d",
@@ -1029,7 +1035,7 @@ def generate_build_ninja(
                 rule="as",
                 inputs=src_path,
                 variables={"asflags": asflags_str},
-                implicit=gnu_as_implicit,
+                implicit=mwasm_implicit,
                 order_only="pre-compile",
             )
             n.newline()

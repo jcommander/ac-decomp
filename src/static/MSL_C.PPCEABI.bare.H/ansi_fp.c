@@ -279,6 +279,16 @@ void __two_exp(decimal* result, short exp) {
     }
 }
 
+unsigned long long __cvt_dbl_ull(double x)
+{
+    if (x <= 0.0)
+        return 0ULL;
+    if (x >= 18446744073709551615.0)
+        return ~0ULL;
+    return (unsigned long long)x;
+}
+
+
 void __num2dec_internal(decimal* d, double x) {
     char sign = (char)(signbit(x) != 0);
 
@@ -320,21 +330,21 @@ void __num2dec_internal(decimal* d, double x) {
 static int __must_round(const decimal* d, int digits){
     //regswap fun here
     unsigned char const* i = d->sig.text + digits;
-            
+
     if (*i > 5) {
         return 1;
     }
-    
+
     if (*i < 5) {
         return -1;
     }
-    
+
     for(i++; i < d->sig.text + d->sig.length; i++){
         if (*i != 0) {
             return 1;
         }
     }
-                  
+
     if (d->sig.text[digits - 1] & 1) {
         return 1;
     }
@@ -346,7 +356,7 @@ static void __rounddec(decimal* d, int digits){
     if (digits > 0 && digits < d->sig.length) {
         int unkBool = __must_round(d,digits);
         d->sig.length = digits;
-            
+
         if (unkBool >= 0) {
             __dorounddecup(d, digits);
         }

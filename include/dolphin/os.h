@@ -114,17 +114,17 @@ typedef struct BI2Debug {
 } BI2Debug;
 
 #ifdef __MWERKS__
-u32 __OSPhysicalMemSize   : (OS_BASE_CACHED | 0x0028);
-volatile int __OSTVMode : (OS_BASE_CACHED | 0x00CC);
-OSThread *__gUnkThread1 : (OS_BASE_CACHED | 0x00D8);
-OSThreadQueue __OSActiveThreadQueue : (OS_BASE_CACHED | 0x00DC);
-OSThread *__gCurrentThread : (OS_BASE_CACHED | 0x00E4);
-u32 __OSSimulatedMemSize  : (OS_BASE_CACHED | 0x00F0);
-u32 __OSBusClock  : (OS_BASE_CACHED | 0x00F8);
-u32 __OSCoreClock : (OS_BASE_CACHED | 0x00FC);
-s32 __gUnknown800030C0[2] : (OS_BASE_CACHED | 0x30C0);
-u8 __gUnknown800030E3 : (OS_BASE_CACHED | 0x30E3);
-vu16 __OSDeviceCode AT_ADDRESS(OS_BASE_CACHED | 0x30E6);
+#define __OSPhysicalMemSize    (*(u32 *)(OS_BASE_CACHED | 0x0028))
+#define __OSTVMode             (*(volatile int *)(OS_BASE_CACHED | 0x00CC))
+#define __gUnkThread1          (*(OSThread **)(OS_BASE_CACHED | 0x00D8))
+#define __OSActiveThreadQueue  (*(OSThreadQueue *)(OS_BASE_CACHED | 0x00DC))
+#define __gCurrentThread       (*(OSThread **)(OS_BASE_CACHED | 0x00E4))
+#define __OSSimulatedMemSize   (*(u32 *)(OS_BASE_CACHED | 0x00F0))
+#define __OSBusClock           (*(u32 *)(OS_BASE_CACHED | 0x00F8))
+#define __OSCoreClock          (*(u32 *)(OS_BASE_CACHED | 0x00FC))
+#define __gUnknown800030C0     (*(s32 (*)[2])(OS_BASE_CACHED | 0x30C0))
+#define __gUnknown800030E3     (*(u8 *)(OS_BASE_CACHED | 0x30E3))
+#define __OSDeviceCode         (*(vu16 *)(OS_BASE_CACHED | 0x30E6))
 #else
 #define __OSBusClock  (*(u32 *)(OS_BASE_CACHED | 0x00F8))
 #define __OSCoreClock (*(u32 *)(OS_BASE_CACHED | 0x00FC))

@@ -1,8 +1,12 @@
-.include "macros.inc"
+; .include "macros.inc"
 .file "targsupp.s"
 
 .text
 .balign 16
+
+.macro twui reg, imm
+    nop
+.endm
 
 .global TRKAccessFile
 .type TRKAccessFile, @function

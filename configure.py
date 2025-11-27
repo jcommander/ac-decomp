@@ -170,7 +170,7 @@ if not config.non_matching:
 # Tool versions
 config.binutils_tag = "2.42-1"
 config.compilers_tag = "20250812"
-config.dtk_tag = "v1.6.2"
+config.dtk_tag = "v1.7.2"
 config.objdiff_tag = "v3.0.0-beta.14"
 config.sjiswrap_tag = "v1.2.1"
 config.wibo_tag = "0.7.0"
@@ -179,19 +179,32 @@ config.orthrus_tag = "v0.2.0"
 # Project
 config.config_path = Path("config") / config.version / "config.yml"
 config.check_sha_path = Path("config") / config.version / "build.sha1"
+# config.asflags = [
+#     "-g",
+#     "-mgekko",
+#     "--strip-local-absolute",
+#     "-I include",
+#     "-I include/dolphin",
+#     "-I include/libc",
+#     "-I src/static/dolphin",
+#     f"-I build/{config.version}/include",
+#     # needed for JUTResFONT_Ascfont_fix12
+#     f"-I build/{config.version}/bin/assets",
+#     f"--defsym version={version_num}",
+# ]
 config.asflags = [
-    "-mgekko",
-    "--strip-local-absolute",
-    "-I include",
-    "-I include/dolphin",
-    "-I include/libc",
-    "-I src/static/dolphin",
-    f"-I build/{config.version}/include",
+    "-gdwarf-2",
+    "-proc gekko",
+    "-I-include",
+    "-I-include/dolphin",
+    "-I-include/libc",
+    "-I-src/static/dolphin",
+    f"-I-build/{config.version}/include",
     # needed for JUTResFONT_Ascfont_fix12
-    f"-I build/{config.version}/bin/assets",
-    f"--defsym version={version_num}",
+    f"-I-build/{config.version}/bin/assets",
 ]
 config.ldflags = [
+    "-gdwarf-2",
     "-fp hardware",
     "-nodefaults",
     "-warn off",  # Ignore forcestrip warnings
@@ -208,12 +221,13 @@ config.reconfig_deps = []
 # Generally leave untouched, with overrides added below.
 cflags_base = [
     # Platform Definitions
+    "-gdwarf-2",
     "-nodefaults",
     "-proc gekko",
     "-align powerpc",
     "-enum int",
     # Multibyte Definitions
-    "-multibyte",
+    "-encoding multibyte",
     "-char unsigned",
     # Gekko Specific Definitions
     "-fp hardware",
@@ -221,7 +235,7 @@ cflags_base = [
     '-pragma "cats off"',
     # Default compiler flags (turn off if needed)
     # "-W all",
-    # "-O4,p",
+    # "-O0",
     # "-inline auto",
     '-pragma "warn_notinlined off"',
     # Helpful linker flags
@@ -237,10 +251,10 @@ cflags_base = [
 ]
 
 # Debug flags
-if args.debug:
-    cflags_base.extend(["-sym on", "-DDEBUG=1", "-D_DEBUG"])
-else:
-    cflags_base.extend(["-sym on", "-DDEBUG=0", "-DNDEBUG"])
+#if args.debug:
+ #   cflags_base.extend(["-sym dwarf-2,full", "-DDEBUG=1", "-D_DEBUG"])
+#else:
+cflags_base.extend(["-sym dwarf-2,full", "-DDEBUG=0", "-DNDEBUG"])
 
 # Warning flags
 if args.warn == "all":
@@ -255,20 +269,20 @@ cflags_common = [
     "-d _LANGUAGE_C",
     "-d F3DEX_GBI_2",
     # Project-specific stuff
-    "-d MUST_MATCH",
+    # "-d MUST_MATCH",
 ]
 
 # DOL flags
 cflags_static = [
     *cflags_base,
     *cflags_common,
-    "-O4,s",
+    "-O0",
 ]
 
 # Metrowerks library flags
 cflags_runtime = [
     *cflags_base,
-    "-O4,p",
+    "-O0",
     "-inline all",
 ]
 
@@ -280,25 +294,25 @@ cflags_foresta = [
     "-sdata2 0",
     "-d IS_REL",
     "-requireprotos",
-    "-sym on",
+    "-sym dwarf-2,full",
 ]
 
 if version_num >= 1:
-    cflags_foresta.append("-O4,p")
+    cflags_foresta.append("-O0")
     cflags_foresta.append("-inline off")
     config.linker_version = "GC/2.6"
     foresta_compiler = "GC/2.6"
 else:
-    cflags_foresta.append("-O4,s")
-    config.linker_version = "GC/1.3.2"
-    foresta_compiler = "GC/1.3.2"
+    cflags_foresta.append("-O0")
+    config.linker_version = "GC/3.0a5.2"
+    foresta_compiler = "GC/3.0a5.2"
 
 
 # Helper function for Dolphin libraries
 def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     return {
         "lib": lib_name,
-        "mw_version": "GC/1.2.5n",
+        "mw_version": "GC/3.0a5.2",
         "cflags": [*cflags_runtime, "-char signed"],
         "progress_category": "sdk",
         "src_dir": "src/static",
@@ -309,7 +323,7 @@ def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
 def DolphinLibMtx(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     return {
         "lib": lib_name,
-        "mw_version": "GC/1.2.5",
+        "mw_version": "GC/3.0a5.2",
         "cflags": [*cflags_runtime, "-char signed"],
         "progress_category": "sdk",
         "src_dir": "src/static",
@@ -320,8 +334,8 @@ def DolphinLibMtx(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
 def JSystemLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     return {
         "lib": lib_name,
-        "mw_version": "GC/1.3.2",
-        "cflags": [*cflags_base, "-O4,s", "-char signed"],
+        "mw_version": "GC/3.0a5.2",
+        "cflags": [*cflags_base, "-O0", "-char signed"],
         "progress_category": "jsystem",
         "src_dir": "src/static",
         "objects": objects,
@@ -386,7 +400,7 @@ config.libs = [
         "progress_category": "library",
         "src_dir": "src/static",
         "objects": [
-            Object(Matching, "libforest/emu64/emu64.c", extra_cflags=["-lang=c++", "-O4,p", "-inline auto"]),
+            Object(Matching, "libforest/emu64/emu64.c", extra_cflags=["-lang=c++", "-O0", "-inline auto"]),
             Object(Matching, "libforest/osreport.c"),
             Object(Matching, "libforest/fault.c"),
             Object(Matching, "libforest/ReconfigBATs.c"),
@@ -424,7 +438,7 @@ config.libs = [
     {
         "lib": "libultra",
         "mw_version": config.linker_version,
-        "cflags": [*cflags_static, "-O4,p", "-inline auto"],
+        "cflags": [*cflags_static, "-O0", "-inline auto"],
         "progress_category": "library",
         "src_dir": "src/static",
         "objects": [
@@ -726,7 +740,7 @@ config.libs = [
     # {
     #     "lib": "jaudio_NES",
     #     "mw_version": config.linker_version,
-    #     "cflags": [*cflags_static, "-lang=c++", "-O4,s", "-str readonly"],
+    #     "cflags": [*cflags_static, "-lang=c++", "-O0", "-str readonly"],
     #     "progress_category": "library",
     #     "src_dir": "src/static",
     #     "objects": [
@@ -742,7 +756,7 @@ config.libs = [
         "objects": [
             Object(Matching, "jaudio_NES/game/audioheaders.c"),
             Object(Matching, "jaudio_NES/game/dummyprobe.c"),
-            Object(Matching, "jaudio_NES/game/emusound.c", extra_cflags=["-O4,s", "-fp_contract on", "-func_align 32", "-vector on"]),
+            Object(Matching, "jaudio_NES/game/emusound.c", extra_cflags=["-O0", "-fp_contract on", "-func_align 32", "-vector on"]),
             Object(Matching, "jaudio_NES/game/game64.c"),
             Object(Matching, "jaudio_NES/game/kappa.c"),
             Object(Matching, "jaudio_NES/game/melody.c"),
@@ -772,7 +786,7 @@ config.libs = [
         "objects": [
             Object(Matching, "jaudio_NES/internal/aictrl.c"),
             Object(Matching, "jaudio_NES/internal/astest.c"),
-            Object(Matching, "jaudio_NES/internal/audiothread.c", extra_cflags=["-sym off"]), # The entire lib probably has sym off
+            Object(Matching, "jaudio_NES/internal/audiothread.c", extra_cflags=["-sym dwarf-2,full"]), # The entire lib probably has sym off
             Object(Matching, "jaudio_NES/internal/cpubuf.c"),
             Object(Matching, "jaudio_NES/internal/dspboot.c"),
             Object(Matching, "jaudio_NES/internal/dspbuf.c"),
@@ -808,8 +822,8 @@ config.libs = [
             Object(Matching, "jaudio_NES/internal/fxinterface.c"),
             Object(Matching, "jaudio_NES/internal/heapctrl.c"),
             Object(Matching, "jaudio_NES/internal/ipldec.c"),
-            Object(Matching, "jaudio_NES/internal/ja_calc.c", extra_cflags=["-sym off"]),
-            Object(NonMatching, "jaudio_NES/internal/jammain_2.c", extra_cflags=["-sym on"]),
+            Object(Matching, "jaudio_NES/internal/ja_calc.c", extra_cflags=["-sym dwarf-2,full"]),
+            Object(NonMatching, "jaudio_NES/internal/jammain_2.c", extra_cflags=["-sym dwarf-2,full"]),
             Object(Matching, "jaudio_NES/internal/jamosc.c"),
             Object(Equivalent, "jaudio_NES/internal/memory.c", extra_cflags=["-pragma \"scheduling 7400\""]),
             Object(Matching, "jaudio_NES/internal/midplay.c"),
@@ -825,12 +839,12 @@ config.libs = [
     },
     {
         "lib": "Famicom",
-        "mw_version": "GC/1.3.2",
+        "mw_version": "GC/3.0a5.2",
         "cflags": [
             *cflags_static,
             "-sdata 0",
             "-sdata2 0",
-            "-sym on",
+            "-sym dwarf-2,full",
         ],
         "progress_category": "library",
         "src_dir": "src/static",
@@ -843,7 +857,7 @@ config.libs = [
     },
     {
         "lib": "MSL_C.PPCEABI.bare.H",
-        "mw_version": "GC/1.3",
+        "mw_version": "GC/3.0a5.2",
         "cflags": [*cflags_runtime, "-inline auto,deferred", "-use_lmw_stmw on", "-char signed", "-fp_contract on", "-str pool,readonly"],
         "progress_category": "sdk",
         "src_dir": "src/static",
@@ -908,10 +922,10 @@ config.libs = [
     },
     {
         "lib": "TRK_MINNOW_DOLPHIN",
-        "mw_version": "GC/1.3",
+        "mw_version": "GC/3.0a5.2",
         "cflags": [
             *cflags_static,
-            "-O4,p",
+            "-O0",
             "-sdata 0",
             "-sdata2 0",
             "-inline auto,deferred",

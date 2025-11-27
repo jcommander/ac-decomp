@@ -223,7 +223,7 @@ static void Camera2_SetView(GAME_PLAY* play) {
     setLookAtView(view, &final_eye, &final_center, &camera->lookat.up);
 }
 
-static f32 Camera2_BorderSize() {
+static f32 Camera2_BorderSize(GAME_PLAY* play) {
     int type = mFI_GET_TYPE(mFI_GetFieldId());
     f32 size = 110.0f;
 
@@ -2503,11 +2503,14 @@ static void Camera2_Staff_Roll_DistAngle(GAME_PLAY* play, ACTOR* speaker, ACTOR*
 
     temp = ((f32)camera->main_data.staff_roll.r_delta / 4600.0f) * 65535.0f;
     dist = ((sin_s(temp) * 0.2f + 1.0f) - 0.2f) * 575.0f;
-    temp = ((f32)camera->main_data.staff_roll.rotation_x_delta / CAMERA2_STAFFROLL_CENTER_X_ROT_STEP_DIVISOR) * 65536.0f;
+    temp =
+        ((f32)camera->main_data.staff_roll.rotation_x_delta / CAMERA2_STAFFROLL_CENTER_X_ROT_STEP_DIVISOR) * 65536.0f;
 
     angle->x = (s16)(sin_s(temp) * 5000.0f);
-    angle->y = (s16)((-(f32)camera->main_data.staff_roll.rotation_y_delta / CAMERA2_STAFFROLL_CENTER_Y_ROT_STEP_DIVISOR) * 65535.0f) +
-               camera->main_data.staff_roll.last_direction.y + (u16)SHT_MIN_S;
+    angle->y =
+        (s16)((-(f32)camera->main_data.staff_roll.rotation_y_delta / CAMERA2_STAFFROLL_CENTER_Y_ROT_STEP_DIVISOR) *
+              65535.0f) +
+        camera->main_data.staff_roll.last_direction.y + (u16)SHT_MIN_S;
     angle->z = 0;
 
     Camera2_MoveDistancePosAndSpeed(play, dist, FALSE);

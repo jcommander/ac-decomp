@@ -49,7 +49,7 @@ static int eLL_get_light_sw_other_room() {
     return ret;
 }
 
-static int eLL_get_light_sw_player_room() {
+static int eLL_get_light_sw_player_room(LAMPLIGHT_ACTOR*) {
     // 6 p.m to 11 p.m
     if ((Common_Get(time.now_sec) >= 64800) && (Common_Get(time.now_sec) < 82800)) {
         return 1;

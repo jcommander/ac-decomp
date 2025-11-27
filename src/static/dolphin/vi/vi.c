@@ -290,7 +290,7 @@ void __VIInit(VITVMode mode)
 
 	encoderType = getEncoderType();
 	if (encoderType == 0) {
-		__VIInitPhilips();
+		//__VIInitPhilips();
 	}
 	nonInter                        = mode & 2;
 	tv                              = (u32)mode >> 2;

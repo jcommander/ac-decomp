@@ -10,8 +10,8 @@ extern OSTime __OSStartTime;
 unsigned long __OSIsDebuggerPresent(void);
 void __OSPSInit(void);
 
-extern void* BOOT_REGION_START AT_ADDRESS(0x812FDFF0);
-extern void* BOOT_REGION_END AT_ADDRESS(0x812FDFEC);
+#define BOOT_REGION_START AT_ADDRESS_STRUCT(void*, 0x812FDFF0)
+#define BOOT_REGION_END AT_ADDRESS_STRUCT(void*, 0x812FDFEC)
 
 // OSAlloc.c
 extern volatile int __OSCurrHeap;
@@ -30,8 +30,7 @@ void __OSContextInit(void);
 void __OSInitMemoryProtection(void);
 
 // OSError.c
-void __OSUnhandledException(unsigned char exception, struct OSContext* context,
-                            unsigned long dsisr, unsigned long dar);
+void __OSUnhandledException(unsigned char exception, struct OSContext* context, unsigned long dsisr, unsigned long dar);
 
 // OSInterrupt.c
 extern void __RAS_OSDisableInterrupts_begin(void);
@@ -42,8 +41,7 @@ extern char* __OSInterruptNames[33];              // D ONLY
 extern char* __OSPIErrors[8];                     // D ONLY
 extern OSErrorHandlerEx __OSErrorTable[16];
 
-__OSInterruptHandler __OSSetInterruptHandler(__OSInterrupt interrupt,
-                                             __OSInterruptHandler handler);
+__OSInterruptHandler __OSSetInterruptHandler(__OSInterrupt interrupt, __OSInterruptHandler handler);
 __OSInterruptHandler __OSGetInterruptHandler(__OSInterrupt interrupt);
 void __OSInterruptInit(void);
 OSInterruptMask __OSMaskInterrupts(OSInterruptMask global);
@@ -57,8 +55,7 @@ int __OSCheckDeadLock(struct OSThread* thread);
 int __OSCheckMutexes(struct OSThread* thread);
 
 // OSResetSW.c
-void __OSResetSWInterruptHandler(__OSInterrupt exception,
-                                 struct OSContext* context);
+void __OSResetSWInterruptHandler(__OSInterrupt exception, struct OSContext* context);
 
 // OSReset.c
 void __OSDoHotReset(s32);
@@ -77,8 +74,7 @@ int __OSUnlockSramEx(int commit);
 int __OSSyncSram(void);
 int __OSCheckSram(void);
 int __OSReadROM(void* buffer, long length, long offset);
-int __OSReadROMAsync(void* buffer, long length, long offset,
-                     void (*callback)());
+int __OSReadROMAsync(void* buffer, long length, long offset, void (*callback)());
 unsigned char __OSGetBootMode(void);
 void __OSSetBootMode(unsigned char ntd);
 
@@ -103,8 +99,7 @@ extern u32 __OSGetDIConfig(void);
 
 // ppc_eabi_init.c
 __declspec(section ".init") asm void __init_hardware(void);
-__declspec(section ".init") asm void __flush_cache(void* address,
-                                                   unsigned int size);
+__declspec(section ".init") asm void __flush_cache(void* address, unsigned int size);
 void __init_user(void);
 void __init_cpp(void);
 void __fini_cpp(void);

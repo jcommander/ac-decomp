@@ -4,10 +4,10 @@
 #include "types.h"
 
 #ifdef __cplusplus
-extern "C"{
+extern "C" {
 #endif
 
-extern volatile u16 __DSPRegs[] AT_ADDRESS(0xCC005000);
+#define __DSPRegs ((volatile u16*)0xCC005000)
 
 #ifdef __cplusplus
 }
